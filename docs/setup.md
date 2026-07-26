@@ -56,9 +56,13 @@ fully implemented and both switch themselves off when `RESEND_API_KEY` is unset
 usually what you want; the reset link is printed and can be pasted straight into
 the browser.
 
-Set the key and the flow turns on everywhere at once. One caveat worth knowing
-before you do: until a domain is verified in Resend, the account can only
-deliver to its own registered address. Better Auth runs `sendResetPassword`
+Set the key and the flow turns on everywhere at once — but note that
+`/forgot-password` is statically prerendered, so `emailIsDeliverable` is read at
+**build** time, not at boot. Adding the variable to a running deployment changes
+nothing until it is rebuilt; on Vercel that means a redeploy, and in CI it means
+the key has to be in the job env before `npm run build`, not just before the
+server starts. One further caveat: until a domain is verified in Resend, the
+account can only deliver to its own registered address. Better Auth runs `sendResetPassword`
 through a background-task wrapper that swallows failures, so a request for any
 other address still answers "check your email" and nothing arrives. See
 [architecture.md](architecture.md) for why `requireEmailVerification` stays off

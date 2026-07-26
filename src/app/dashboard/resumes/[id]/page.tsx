@@ -76,11 +76,19 @@ export default async function ResumeDetailPage({
       </div>
 
       <section>
-        <h2 className="text-title font-sans font-bold text-ink">
+        <h2
+          id="extracted-text"
+          className="text-title font-sans font-bold text-ink"
+        >
           Extracted text
         </h2>
         {resume.content ? (
-          <pre className="mt-4 max-h-[28rem] overflow-auto whitespace-pre-wrap rounded-xl border border-hairline bg-canvas p-6 font-sans text-body-lg text-ink">
+          <pre
+            role="region"
+            aria-labelledby="extracted-text"
+            tabIndex={0}
+            className="mt-4 max-h-[28rem] overflow-auto whitespace-pre-wrap rounded-xl border border-hairline bg-canvas p-6 font-sans text-body-lg text-ink"
+          >
             {resume.content}
           </pre>
         ) : (
