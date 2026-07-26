@@ -210,7 +210,7 @@ export default async function ApplicationDetailPage({
       <div>
         <Link
           href="/dashboard/applications"
-          className="font-sans text-caption font-medium text-ink-mute transition-colors hover:text-ink"
+          className="-m-2 inline-block p-2 font-sans text-caption font-medium text-ink-mute transition-colors hover:text-ink"
         >
           ← Applications
         </Link>
@@ -240,26 +240,24 @@ export default async function ApplicationDetailPage({
                   href={application.jobUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-sans text-caption font-medium text-link-blue underline-offset-4 transition-colors hover:text-link-hover hover:underline"
+                  className="-my-1.5 py-1.5 font-sans text-caption font-medium text-link-blue underline-offset-4 transition-colors hover:text-link-hover hover:underline"
                 >
                   Original posting ↗
                 </a>
               )}
             </div>
           </div>
-          <div className="flex w-full items-center gap-2 sm:w-auto">
+          {/* Sized to their labels rather than stretched to half the screen
+              each: on a phone that row sat above every piece of content, and
+              the loudest thing on it was the destructive one. */}
+          <div className="flex items-center gap-2">
             <Link
               href={`/dashboard/applications/${application.id}/edit`}
-              className={buttonClass({
-                variant: "secondary",
-                className: "flex-1 sm:flex-none",
-              })}
+              className={buttonClass({ variant: "secondary" })}
             >
               Edit
             </Link>
-            <div className="flex-1 *:w-full sm:flex-none">
-              <DeleteApplicationButton id={application.id} />
-            </div>
+            <DeleteApplicationButton id={application.id} />
           </div>
         </div>
       </div>

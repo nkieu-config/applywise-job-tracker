@@ -30,7 +30,7 @@ export function PostingPane({
       <button
         type="button"
         onClick={() => setExpanded((v) => !v)}
-        className="mt-2 font-sans text-caption font-semibold text-link-blue underline-offset-4 hover:underline lg:hidden"
+        className="mt-1 py-2 font-sans text-caption font-semibold text-link-blue underline-offset-4 hover:underline lg:hidden"
       >
         {expanded ? "Collapse posting" : "Show the full posting"}
       </button>
