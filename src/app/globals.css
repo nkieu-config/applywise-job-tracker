@@ -52,6 +52,7 @@
   --surface-hover: #f5eded;
 
   --hairline: #e5dde9;
+  --field-border: #94879c;
 
   --marker: #ffdb4d;
   --marker-ink: #221a26;
@@ -95,6 +96,7 @@
     --surface-hover: #252030;
 
     --hairline: #39323f;
+    --field-border: #7a6e86;
 
     --marker: rgb(240 205 84 / 0.30);
     --marker-ink: #e8e5ee;
@@ -138,6 +140,7 @@
   --surface-hover: #252030;
 
   --hairline: #39323f;
+  --field-border: #7a6e86;
 
   --marker: rgb(240 205 84 / 0.30);
   --marker-ink: #e8e5ee;
@@ -184,6 +187,7 @@
   --color-canvas-lavender: var(--canvas-lavender);
 
   --color-hairline: var(--hairline);
+  --color-field-border: var(--field-border);
 
   --color-marker: var(--marker);
   --color-marker-ink: var(--marker-ink);

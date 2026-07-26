@@ -61,7 +61,10 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label={`Theme: ${LABEL[theme]}. Switch to ${LABEL[next]}.`}
       title={`Theme: ${LABEL[theme]}`}
       className={cn(
-        "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-hairline bg-canvas text-ink-mute transition-colors hover:bg-canvas-lavender hover:text-ink",
+        // 36px reads right beside a wordmark, but is under the 44px a thumb
+        // needs. The pseudo-element extends only the hit area, so the button
+        // stays the size the header was laid out around.
+        "relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-hairline bg-canvas text-ink-mute transition-colors after:absolute after:-inset-1 after:content-[''] hover:bg-canvas-lavender hover:text-ink",
         className,
       )}
     >
