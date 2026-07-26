@@ -174,11 +174,11 @@ Full environment-variable reference, scripts and deploy guide: [docs/setup.md](d
 
 ## Testing & quality
 
-425 tests across two Vitest projects, plus three Playwright suites (47 browser tests including the sign-in setup) — every one of them gating each push and pull request:
+428 tests across two Vitest projects, plus three Playwright suites (47 browser tests including the sign-in setup) — every one of them gating each push and pull request:
 
 - **Node (server)** — ownership scoping of every Server Action, the JD-analysis cache short-circuit, the pipeline-snapshot aggregation, the resume upload's blob lifecycle including compensating deletes, the page cap that stops a PDF bomb from pinning the function, rate limiting for both AI and auth, embedding batch splitting, and the fence that keeps a job description from being read as prompt instructions.
 - **jsdom (components)** — the streaming UI's save/discard rules and the accessibility invariants of the drag-and-drop board.
-- **Integration (10 of the 425)** — run against a real Postgres, and skip locally when no database is reachable. CI always runs them against a `pgvector/pgvector` service container, so the raw SQL the mocked unit tests can't reach stays covered: the rate limiter's atomic upsert, and the predicate deciding whether a resume holds readable text.
+- **Integration (10 of the 428)** — run against a real Postgres, and skip locally when no database is reachable. CI always runs them against a `pgvector/pgvector` service container, so the raw SQL the mocked unit tests can't reach stays covered: the rate limiter's atomic upsert, and the predicate deciding whether a resume holds readable text.
 - **e2e (`npm run test:e2e`)** — three Playwright suites against a running app. A read-only smoke test walks sign-in, Today, navigation and the auth redirect on the shared demo without mutating it; a separate suite signs up a throwaway account, drives the full create → edit → delete lifecycle, and deletes the account afterwards; and an axe suite fails the build on any serious or critical accessibility violation across all 15 screens in both themes — including the two admin- and mail-gated pages, which CI has to be given `ADMIN_EMAILS` and a placeholder mail key to reach at all, or they would 404 and pass by rendering nothing. CI builds the app, seeds a throwaway database and runs all three — an accessibility gate nobody remembers to run is not a gate, and one that quietly stops reaching half the app is not one either.
 
 Security-critical modules — the prompt fence, the admin gate, the AI ownership guard and the PDF page cap among them — are pinned to **100% coverage thresholds** in CI.

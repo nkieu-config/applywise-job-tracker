@@ -23,6 +23,11 @@ export function DemoButton({
   const toast = useToast();
   const [demoLoading, setDemoLoading] = useState(false);
 
+  function report(message: string) {
+    if (onError) onError(message);
+    else toast(message, "error");
+  }
+
   async function loginDemo() {
     setDemoLoading(true);
     if (onError) onError(null);
@@ -32,14 +37,19 @@ export function DemoButton({
         password: DEMO_PASSWORD,
       });
       if (error) {
-        if (onError) onError("The demo account is unavailable right now.");
-        else toast("The demo account is unavailable right now.", "error");
+        // Every failure used to read "unavailable", which told a visitor
+        // nothing and hid the one cause they can actually do something about:
+        // the sign-in rate limit, which the demo shares with everyone.
+        report(
+          error.status === 429
+            ? "The demo is busy right now — give it a minute and try again."
+            : "The demo account is unavailable right now.",
+        );
         return;
       }
       router.push("/dashboard");
     } catch {
-      if (onError) onError("The demo account is unavailable right now.");
-      else toast("The demo account is unavailable right now.", "error");
+      report("The demo account is unavailable right now.");
     } finally {
       setDemoLoading(false);
     }
