@@ -137,31 +137,36 @@ export function ActivityChart({ weeks }: { weeks: WeeklyActivity[] }) {
         </p>
       )}
 
-      <table className="sr-only">
-        <caption>Applications added per week, by status</caption>
-        <thead>
-          <tr>
-            <th scope="col">Week</th>
-            {APPLICATION_STATUSES.map((s) => (
-              <th key={s} scope="col">
-                {STATUS_LABELS[s]}
-              </th>
-            ))}
-            <th scope="col">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {weeks.map((week) => (
-            <tr key={week.weekStart}>
-              <th scope="row">{week.label}</th>
+      {/* The wrapper, not the table, carries sr-only: `width: 1px` is only a
+          minimum for a table box, so the table stays as wide as its content and
+          pushes the document past the viewport — invisible, but scrollable. */}
+      <div className="sr-only">
+        <table>
+          <caption>Applications added per week, by status</caption>
+          <thead>
+            <tr>
+              <th scope="col">Week</th>
               {APPLICATION_STATUSES.map((s) => (
-                <td key={s}>{week.counts[s]}</td>
+                <th key={s} scope="col">
+                  {STATUS_LABELS[s]}
+                </th>
               ))}
-              <td>{week.total}</td>
+              <th scope="col">Total</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {weeks.map((week) => (
+              <tr key={week.weekStart}>
+                <th scope="row">{week.label}</th>
+                {APPLICATION_STATUSES.map((s) => (
+                  <td key={s}>{week.counts[s]}</td>
+                ))}
+                <td>{week.total}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <ul
         className={cn(

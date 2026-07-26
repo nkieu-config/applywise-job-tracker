@@ -42,9 +42,9 @@ export function PipelineCoach({
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="font-sans text-body font-bold text-ink">
+          <h2 className="font-sans text-body font-bold text-ink">
             AI coach
-          </h3>
+          </h2>
           <p className="mt-1 font-sans text-caption text-ink-mute">
             Strategic advice from your whole pipeline
           </p>
