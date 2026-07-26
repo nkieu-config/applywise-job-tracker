@@ -17,6 +17,7 @@ const literata = Literata({
   subsets: ["latin"],
   variable: "--font-literata",
   display: "swap",
+  preload: false,
 });
 
 const SOCIAL_DESCRIPTION =

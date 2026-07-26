@@ -132,6 +132,28 @@ package, plus Literata (`--font-serif`) via `next/font/google` — all loaded in
 [`layout.tsx`](../src/app/layout.tsx). Literata is the document tier: it sets the
 text the app did not write, so a job posting never looks like interface.
 
+**Why Geist, given that it is Vercel's own face and this deploys to Vercel.**
+The sans is chrome. It carries 163 of the roughly 220 typed elements in the app
+— every label, every button, every field — and its job on all of them is to be
+read without being noticed. Identity here is carried by the aubergine, by the
+serif that marks a document as *not ours*, and by the mono that marks a number
+as *computed*; asking the interface face to also be the brand would put character
+in the one place that has to stay quiet at 12px. Geist is a neutral, well-hinted
+variable grotesque that holds up at `--text-fine`, which is the tier the app
+leans on hardest. It is a default that happens to be correct, and it is kept on
+that basis rather than on the basis of being already there. If the identity ever
+needs to move into the type, the place to move it is the display tier — 50/32/24,
+a handful of headlines — not the 163.
+
+**Literata is deliberately not preloaded.** The variable sits on `<html>`, so
+Next.js would preload it on every route; but every surface that sets serif —
+the posting pane, the marked-up document, prep sheets, the coach brief, the
+agenda — is behind sign-in. The landing page renders no serif at all, and on a
+phone it was fetching 52.7KB of it against a 208KB page: fonts were 91% of the
+weight, and a quarter of the total was a face that page never draws. With
+`preload: false` it loads when a signed-in surface first needs it, at the cost
+of one `swap` per session on a page the visitor has already committed to.
+
 **Display tier** — `font-display-lg` (50px) / `-md` (32px, the workhorse) /
 `-sm` (24px). Implemented as `@utility` classes rather than `@theme` variables so
 each bundles size, weight, leading and tracking: a headline can never be set at
