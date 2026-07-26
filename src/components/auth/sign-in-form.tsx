@@ -79,7 +79,7 @@ export function SignInForm({
             {canResetPassword && (
               <Link
                 href="/forgot-password"
-                className="font-sans text-body font-bold text-link-blue transition-colors hover:text-link-hover hover:underline"
+                className="-my-2 py-2 font-sans text-body font-bold text-link-blue transition-colors hover:text-link-hover hover:underline"
               >
                 Forgot?
               </Link>
