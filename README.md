@@ -130,7 +130,7 @@ The design system in [docs/design.md](docs/design.md), as actually rendered:
 
 </details>
 
-Every image on this page is generated from the seeded demo by Playwright — `npm run screenshots` for the stills, `npm run record-demo` for the streaming clip — so none of them can drift from the real UI.
+Every image on this page is driven out of the running app by Playwright against the seeded demo — `npm run screenshots` for the stills, `npm run record-demo` for the streaming clip. Nothing here is a mockup, and regenerating the set is one command. They are committed artifacts rather than a CI-checked invariant, and deliberately so: the demo's deadlines are relative to the day it is seeded, so two runs a week apart differ in content while the UI is unchanged — there is no byte comparison a build could make.
 
 ## Tech stack
 
@@ -218,6 +218,7 @@ Deliberate scope choices — plus one quota constraint — for a portfolio-scale
 - **The e2e mutating suite skips the AI actions** — the throwaway-account suite covers create/edit/delete end to end, but not the AI features (they spend the shared hourly budget) or resume upload (it needs real blob storage); those stay covered by the unit and integration tests. The smoke suite is deliberately read-only so it never mutates the shared demo.
 - **OAuth is opt-in, not enabled on the live demo** — GitHub and Google sign-in ship in the code and light up when their credentials are set (`enabledOAuthProviders()` hides an unconfigured provider). The public demo runs email/password + the one-click demo account so there's nothing to configure to try it.
 - **PDF text extraction only** — a scanned or image-only PDF carries no text layer, so the upload is rejected with a "no readable text — upload a text-based PDF" message rather than being OCR-ed.
+- **Password reset works, but the live demo can only mail one address** — the flow is complete and switches itself off entirely when no mail key is set. Production has one, so `/forgot-password` is live; what it does not have is a *verified domain*, and until it does, Resend will only deliver to the account's own registered address. Better Auth swallows send failures by design, so a reset requested for any other address answers "check your email" and nothing arrives. Verifying a domain is the fix, and it needs a domain — which is also why `requireEmailVerification` stays off ([architecture.md](docs/architecture.md)).
 
 Next on the roadmap: OCR fallback for image-only PDFs, and extending the e2e mutating coverage to the resume-upload flow against a throwaway blob store.
 

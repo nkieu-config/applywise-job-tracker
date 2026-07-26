@@ -42,8 +42,27 @@ See [.env.example](../.env.example). `.env` files are gitignored.
 | `CRON_SECRET` | Bearer token Vercel Cron uses to call `/api/cron/*` (optional; the route refuses to run when unset) |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | GitHub OAuth app credentials (optional — see below) |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth client credentials (optional — see below) |
+| `RESEND_API_KEY` | [Resend](https://resend.com) key for outbound mail (optional — see below) |
+| `EMAIL_FROM` | Sender for those mails; defaults to `Applywise <onboarding@resend.dev>` |
 
 Optional knobs (`AI_USAGE_DISABLED`, `EVAL_RPM`, `EVAL_MAX_ATTEMPTS`, `EVAL_JUDGE_MODEL`, `BASE_URL`) are documented in `.env.example`.
+
+### Outbound email (optional)
+
+Two flows send mail: password reset and the sign-up verification link. Both are
+fully implemented and both switch themselves off when `RESEND_API_KEY` is unset
+— `/forgot-password` returns 404, the sign-in page stops offering the link, and
+`sendEmail` logs to the console instead of throwing. Locally that console log is
+usually what you want; the reset link is printed and can be pasted straight into
+the browser.
+
+Set the key and the flow turns on everywhere at once. One caveat worth knowing
+before you do: until a domain is verified in Resend, the account can only
+deliver to its own registered address. Better Auth runs `sendResetPassword`
+through a background-task wrapper that swallows failures, so a request for any
+other address still answers "check your email" and nothing arrives. See
+[architecture.md](architecture.md) for why `requireEmailVerification` stays off
+until a verified sender exists.
 
 ### Social sign-in (optional)
 
@@ -96,7 +115,7 @@ npm run test:coverage # vitest with per-file coverage thresholds
 npm run eval          # AI eval suites (needs GEMINI_API_KEY)
 npm run screenshots   # regenerate the README screenshots via Playwright
 npm run record-demo   # re-record the streaming GIF (Playwright + ffmpeg, one Gemini call)
-npm run social-preview # rebuild the 1280×640 GitHub social card from dashboard.png
+npm run social-preview # rebuild the 1280×640 GitHub social card from today.png
 npm run seed          # populate the demo account (server must be running)
 ```
 
