@@ -10,21 +10,42 @@ const PAGES = [
   { name: "Applications", path: "/dashboard/applications" },
   { name: "Applications list view", path: "/dashboard/applications?view=list" },
   { name: "The desk", path: "/dashboard/applications/demo_app_1" },
+  { name: "Edit application", path: "/dashboard/applications/demo_app_1/edit" },
   { name: "New application", path: "/dashboard/applications/new" },
   { name: "Resumes", path: "/dashboard/resumes" },
+  { name: "Resume detail", path: "/dashboard/resumes/demo_resume_1" },
+  { name: "AI usage", path: "/dashboard/ai-usage" },
 ];
 
-// The two screens someone meets before they have an account — and the landing
-// page is the one a visitor may only ever see. Checked signed out, which is how
-// they are actually met; both render either way.
+// Every screen someone meets before they have an account — the landing page
+// being the one a visitor may only ever see. Checked signed out, which is how
+// they are actually met. The password screens serve only while mail can be
+// delivered, so CI supplies a placeholder key; the reset screen appears twice
+// because a token renders the form and no token renders the expired-link state,
+// and only one of the two is on screen at a time.
 const PUBLIC_PAGES = [
   { name: "Landing page", path: "/" },
   { name: "Sign in", path: "/sign-in" },
+  { name: "Sign up", path: "/sign-up" },
+  { name: "Forgot password", path: "/forgot-password" },
+  { name: "Reset password, link expired", path: "/reset-password" },
+  {
+    name: "Reset password, form",
+    path: "/reset-password?token=e2e-placeholder-token",
+  },
 ];
 
-async function expectNoSeriousViolations(page: Page, path: string) {
-  await page.goto(path);
+const DESK_TABS = ["Match", "Tailor", "Prep"] as const;
+
+async function expectNoSeriousViolations(
+  page: Page,
+  path: string,
+  prepare?: () => Promise<void>,
+) {
+  const response = await page.goto(path);
+  expect(response?.status(), `${path} did not render`).toBeLessThan(400);
   await page.waitForLoadState("networkidle");
+  await prepare?.();
 
   // Sections below the fold enter at opacity 0 and reveal on scroll. Left
   // unscrolled, axe reads that as text with no contrast against its background
@@ -74,6 +95,25 @@ for (const scheme of ["light", "dark"] as const) {
         page,
       }) => {
         await expectNoSeriousViolations(page, page_.path);
+      });
+    }
+
+    // The desk keeps every panel mounted and hides the inactive ones, so the
+    // page-level scan above only ever measured whichever tab opened first —
+    // two thirds of the app's densest screen went unchecked.
+    for (const tab of DESK_TABS) {
+      test(`The desk — ${tab} tab has no serious accessibility violations`, async ({
+        page,
+      }) => {
+        await expectNoSeriousViolations(
+          page,
+          "/dashboard/applications/demo_app_1",
+          async () => {
+            const control = page.getByRole("tab", { name: tab });
+            await control.click();
+            await expect(control).toHaveAttribute("aria-selected", "true");
+          },
+        );
       });
     }
 
