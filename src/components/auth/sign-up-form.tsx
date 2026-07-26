@@ -2,12 +2,30 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { signUp } from "@/lib/auth-client";
 import { DemoButton } from "@/components/auth/demo-button";
 import { SocialButtons } from "@/components/auth/social-buttons";
 import { Button, buttonClass } from "@/components/ui/button";
-import { inputClass, labelClass } from "@/components/ui/form-styles";
+import { PasswordInput } from "@/components/ui/password-input";
+import {
+  fieldClass,
+  fieldLabelClass,
+  inputClass,
+} from "@/components/ui/form-styles";
 import type { OAuthProviderId } from "@/lib/oauth-providers";
+
+const MIN_PASSWORD_LENGTH = 8;
+
+type FieldName = "name" | "email" | "password";
+
+function FieldError({ id, children }: { id: string; children: React.ReactNode }) {
+  return (
+    <span id={id} className="font-sans text-body font-medium text-semantic-error">
+      {children}
+    </span>
+  );
+}
 
 export function SignUpForm({
   oauthProviders = [],
@@ -19,16 +37,52 @@ export function SignUpForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<
+    Partial<Record<FieldName, React.ReactNode>>
+  >({});
+  const [emailTaken, setEmailTaken] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  function validate() {
+    const next: Partial<Record<FieldName, React.ReactNode>> = {};
+    if (!name.trim()) next.name = "Enter your name.";
+    if (!email.trim()) next.email = "Enter your email address.";
+    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
+      next.email = "That does not look like an email address.";
+    if (!password) next.password = "Choose a password.";
+    else if (password.length < MIN_PASSWORD_LENGTH)
+      next.password = `Use at least ${MIN_PASSWORD_LENGTH} characters — this one has ${password.length}.`;
+    return next;
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setEmailTaken(false);
+
+    const invalid = validate();
+    setFieldErrors(invalid);
+    if (Object.keys(invalid).length > 0) {
+      const first = (["name", "email", "password"] as const).find(
+        (field) => invalid[field],
+      );
+      document.getElementById(`signup-${first}`)?.focus();
+      return;
+    }
+
     setLoading(true);
     try {
       const { error } = await signUp.email({ name, email, password });
       if (error) {
-        setError(error.message ?? "Could not create your account.");
+        // The commonest failure here is not a bad form, it is someone who
+        // already has an account — so it is answered beside the email field
+        // with the way out, rather than as a generic banner near the button.
+        if (error.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
+          setEmailTaken(true);
+          document.getElementById("signup-email")?.focus();
+        } else {
+          setError(error.message ?? "Could not create your account.");
+        }
         setLoading(false);
         return;
       }
@@ -43,46 +97,90 @@ export function SignUpForm({
 
   return (
     <>
-      <form onSubmit={onSubmit} className="flex flex-col gap-5">
-        <label className={labelClass}>
-          Name
+      <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
+        <div className={fieldClass}>
+          <label htmlFor="signup-name" className={fieldLabelClass}>
+            Name
+          </label>
           <input
+            id="signup-name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            required
             autoComplete="name"
+            aria-invalid={Boolean(fieldErrors.name)}
+            aria-describedby={fieldErrors.name ? "signup-name-error" : undefined}
             className={inputClass}
           />
-        </label>
+          {fieldErrors.name && (
+            <FieldError id="signup-name-error">{fieldErrors.name}</FieldError>
+          )}
+        </div>
 
-        <label className={labelClass}>
-          Email
+        <div className={fieldClass}>
+          <label htmlFor="signup-email" className={fieldLabelClass}>
+            Email
+          </label>
           <input
+            id="signup-email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
             autoComplete="email"
+            aria-invalid={Boolean(fieldErrors.email) || emailTaken}
+            aria-describedby={
+              emailTaken
+                ? "signup-email-taken"
+                : fieldErrors.email
+                  ? "signup-email-error"
+                  : undefined
+            }
             className={inputClass}
           />
-        </label>
+          {fieldErrors.email && (
+            <FieldError id="signup-email-error">{fieldErrors.email}</FieldError>
+          )}
+          {emailTaken && (
+            <FieldError id="signup-email-taken">
+              That email already has an account.{" "}
+              <Link
+                href="/sign-in"
+                className="font-bold text-link-blue underline underline-offset-4 transition-colors hover:text-link-hover"
+              >
+                Sign in instead
+              </Link>
+              .
+            </FieldError>
+          )}
+        </div>
 
-        <label className={labelClass}>
-          Password
-          <input
-            type="password"
+        <div className={fieldClass}>
+          <label htmlFor="signup-password" className={fieldLabelClass}>
+            Password
+          </label>
+          <PasswordInput
+            id="signup-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={8}
             autoComplete="new-password"
-            className={inputClass}
+            aria-invalid={Boolean(fieldErrors.password)}
+            aria-describedby={
+              fieldErrors.password ? "signup-password-error" : "signup-password-hint"
+            }
           />
-          <span className="text-body font-normal font-sans text-ink-mute">
-            At least 8 characters.
-          </span>
-        </label>
+          {fieldErrors.password ? (
+            <FieldError id="signup-password-error">
+              {fieldErrors.password}
+            </FieldError>
+          ) : (
+            <span
+              id="signup-password-hint"
+              className="text-body font-normal font-sans text-ink-mute"
+            >
+              At least {MIN_PASSWORD_LENGTH} characters.
+            </span>
+          )}
+        </div>
 
         {error && (
           <p

@@ -7,7 +7,13 @@ import { signIn } from "@/lib/auth-client";
 import { DemoButton } from "@/components/auth/demo-button";
 import { SocialButtons } from "@/components/auth/social-buttons";
 import { Button, buttonClass } from "@/components/ui/button";
-import { inputClass, labelClass } from "@/components/ui/form-styles";
+import { PasswordInput } from "@/components/ui/password-input";
+import {
+  fieldClass,
+  fieldLabelClass,
+  inputClass,
+  labelClass,
+} from "@/components/ui/form-styles";
 import type { OAuthProviderId } from "@/lib/oauth-providers";
 
 export function SignInForm({
@@ -73,9 +79,11 @@ export function SignInForm({
           />
         </label>
 
-        <label className={labelClass}>
-          <span className="flex items-center justify-between gap-2">
-            Password
+        <div className={fieldClass}>
+          <div className="flex items-center justify-between gap-2">
+            <label htmlFor="signin-password" className={fieldLabelClass}>
+              Password
+            </label>
             {canResetPassword && (
               <Link
                 href="/forgot-password"
@@ -84,16 +92,15 @@ export function SignInForm({
                 Forgot?
               </Link>
             )}
-          </span>
-          <input
-            type="password"
+          </div>
+          <PasswordInput
+            id="signin-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
-            className={inputClass}
           />
-        </label>
+        </div>
 
         {error && (
           <p
