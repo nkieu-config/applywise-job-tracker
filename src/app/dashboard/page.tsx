@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { ChevronRight, Plus } from "lucide-react";
 import { requireSession } from "@/server/get-session";
 import { formatDisplayDate } from "@/lib/format";
 import {
@@ -198,7 +198,10 @@ export default async function TodayPage() {
 
             <Pipeline counts={snapshot.statusCounts} />
 
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* items-start, or the grid stretches both cards to the taller
+                one: the chart keeps its viewBox aspect ratio and cannot grow
+                into the extra space, so it was leaving ~280px of empty card. */}
+            <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
               <Card className="p-6">
                 <h3 className="font-sans text-body font-bold text-ink">
                   Weekly activity
@@ -251,7 +254,7 @@ export default async function TodayPage() {
               >
                 <Link
                   href={`/dashboard/applications/${app.id}`}
-                  className="flex items-center justify-between gap-4 py-3 transition-colors hover:bg-surface-hover"
+                  className="group flex items-center justify-between gap-3 py-3 transition-colors hover:bg-surface-hover"
                 >
                   <span className="min-w-0">
                     <span className="block truncate font-sans text-body font-medium text-ink">
@@ -261,11 +264,20 @@ export default async function TodayPage() {
                       {app.company}
                     </span>
                   </span>
-                  {app.deadline && (
-                    <span className="shrink-0 font-mono text-caption tabular-nums text-ink-mute">
-                      {formatDisplayDate(app.deadline)}
-                    </span>
-                  )}
+                  <span className="flex shrink-0 items-center gap-1.5">
+                    {app.deadline && (
+                      <span className="font-mono text-caption tabular-nums text-ink-mute">
+                        {formatDisplayDate(app.deadline)}
+                      </span>
+                    )}
+                    {/* Hover was the only sign these rows were links, and a
+                        touch screen never hovers. */}
+                    <ChevronRight
+                      size={16}
+                      aria-hidden="true"
+                      className="text-ink-mute transition-colors group-hover:text-ink"
+                    />
+                  </span>
                 </Link>
               </li>
             ))}
