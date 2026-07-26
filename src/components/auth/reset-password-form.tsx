@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { Button, buttonClass } from "@/components/ui/button";
-import { inputClass, labelClass } from "@/components/ui/form-styles";
+import { PasswordInput } from "@/components/ui/password-input";
+import {
+  fieldClass,
+  fieldLabelClass,
+} from "@/components/ui/form-styles";
 
 export function ResetPasswordForm({ token }: { token: string | null }) {
   const router = useRouter();
@@ -60,34 +64,40 @@ export function ResetPasswordForm({ token }: { token: string | null }) {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-5">
-      <label className={labelClass}>
-        New password
-        <input
-          type="password"
+      <div className={fieldClass}>
+        <label htmlFor="reset-password" className={fieldLabelClass}>
+          New password
+        </label>
+        <PasswordInput
+          id="reset-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           minLength={8}
           autoComplete="new-password"
-          className={inputClass}
+          aria-describedby="reset-password-hint"
         />
-        <span className="text-body font-normal font-sans text-ink-mute">
+        <span
+          id="reset-password-hint"
+          className="font-sans text-body font-normal text-ink-mute"
+        >
           At least 8 characters.
         </span>
-      </label>
+      </div>
 
-      <label className={labelClass}>
-        Confirm new password
-        <input
-          type="password"
+      <div className={fieldClass}>
+        <label htmlFor="reset-confirm" className={fieldLabelClass}>
+          Confirm new password
+        </label>
+        <PasswordInput
+          id="reset-confirm"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
           required
           minLength={8}
           autoComplete="new-password"
-          className={inputClass}
         />
-      </label>
+      </div>
 
       {error && (
         <p

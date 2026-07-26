@@ -30,7 +30,7 @@ export async function signUpThrowaway(page: Page): Promise<string> {
   await page.goto("/sign-up");
   await page.getByLabel("Name").fill("E2E Mutations");
   await page.getByLabel("Email").fill(email);
-  await page.getByLabel("Password").fill("e2e-throwaway-pw-2026");
+  await page.getByLabel("Password", { exact: true }).fill("e2e-throwaway-pw-2026");
   await page.getByRole("button", { name: "Sign up" }).click();
   await page.waitForURL("**/dashboard");
   return email;
@@ -47,7 +47,7 @@ export function deleteUser(email: string): void {
 export async function signInAsDemo(page: Page): Promise<void> {
   await page.goto("/sign-in");
   await page.getByLabel("Email").fill(DEMO_EMAIL);
-  await page.getByLabel("Password").fill(DEMO_PASSWORD);
+  await page.getByLabel("Password", { exact: true }).fill(DEMO_PASSWORD);
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await page.waitForURL("**/dashboard");
 }
