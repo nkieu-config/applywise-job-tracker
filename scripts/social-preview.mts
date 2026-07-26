@@ -5,7 +5,7 @@ import { chromium } from "@playwright/test";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = path.join(rootDir, "docs", "screenshots");
-const source = path.join(outDir, "dashboard.png");
+const source = path.join(outDir, "today.png");
 
 let shot: string;
 try {
