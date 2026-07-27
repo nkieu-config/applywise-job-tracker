@@ -44,19 +44,15 @@ export function Desk({
 
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-8">
-      {/* The pane scrolls on its own at wide widths, which makes it unreachable
-          by keyboard unless it can take focus — a mouse can scroll it, a
-          keyboard could not. */}
-      <div
-        role="region"
-        aria-label="Job posting"
-        tabIndex={0}
-        className="lg:sticky lg:top-6 lg:max-h-[calc(100dvh-5rem)] lg:overflow-y-auto lg:pr-1"
-      >
-        {posting}
-      </div>
-
-      <div className="flex min-w-0 flex-col gap-4">
+      {/* Tabs first in the source. Stacked on a phone their position was a
+          function of how far the header and the clamped posting happened to
+          push them: measured across five applications they landed anywhere
+          from 600px to 799px, and at 799px they sat underneath the fixed
+          bottom nav — the page's primary control, untappable, on the very
+          application the README tells a visitor to open. Now they sit directly
+          under the header at every width. The two-column layout is restored by
+          grid placement below, so the desktop reading order is unchanged. */}
+      <div className="flex min-w-0 flex-col gap-4 lg:col-start-2 lg:row-start-1">
         <div
           role="tablist"
           aria-label="Your side of this application"
@@ -79,7 +75,7 @@ export function Desk({
                 tabIndex={selected ? 0 : -1}
                 onClick={() => setActive(tab.id)}
                 className={cn(
-                  "-mb-px border-b-2 px-3 py-2 font-sans text-body font-semibold transition-colors",
+                  "-mb-px border-b-2 px-3 py-3 font-sans text-body font-semibold transition-colors",
                   selected
                     ? "border-primary-ink text-ink"
                     : "border-transparent text-ink-mute hover:text-ink",
@@ -104,6 +100,18 @@ export function Desk({
             {tab.panel}
           </div>
         ))}
+      </div>
+
+      {/* The pane scrolls on its own at wide widths, which makes it unreachable
+          by keyboard unless it can take focus — a mouse can scroll it, a
+          keyboard could not. */}
+      <div
+        role="region"
+        aria-label="Job posting"
+        tabIndex={0}
+        className="lg:col-start-1 lg:row-start-1 lg:sticky lg:top-6 lg:max-h-[calc(100dvh-5rem)] lg:overflow-y-auto lg:pr-1"
+      >
+        {posting}
       </div>
     </div>
   );

@@ -50,6 +50,22 @@ export const auth = betterAuth({
       maxAge: SESSION_COOKIE_CACHE_SECONDS,
     },
   },
+  // Vercel routes a request through an edge region before the function, so
+  // `x-forwarded-for` arrives as a chain. Better Auth refuses to trust a
+  // multi-hop chain without a trusted-proxy list — correctly, since any hop
+  // could be spoofed — and falls back to keying every caller under a single
+  // "no-trusted-ip" bucket. That turns the sign-in limit below from 10 per
+  // visitor into 10 for the whole site. `x-vercel-forwarded-for` and
+  // `x-real-ip` are single-valued and set by the platform, so they resolve.
+  advanced: {
+    ipAddress: {
+      ipAddressHeaders: [
+        "x-vercel-forwarded-for",
+        "x-real-ip",
+        "x-forwarded-for",
+      ],
+    },
+  },
   rateLimit: {
     enabled: true,
     window: 60,
