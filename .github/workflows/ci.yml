@@ -65,13 +65,6 @@ jobs:
       - if: steps.deps.outputs.cache-hit != 'true'
         run: npm ci
 
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .next/cache
-          key: next-verify-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
-          restore-keys: |
-            next-verify-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
-
       - run: npm run lint
 
       - run: npm run typecheck
@@ -222,12 +215,6 @@ jobs:
       - name: Apply migrations
         run: npx prisma migrate deploy
 
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .next/cache
-          key: next-e2e-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
-          restore-keys: |
-            next-e2e-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
 
       - run: npm run build
 
