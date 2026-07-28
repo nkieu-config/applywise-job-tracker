@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signUp } from "@/lib/auth-client";
+import { useHydrated } from "@/lib/use-hydrated";
 import { DemoButton } from "@/components/auth/demo-button";
 import { SocialButtons } from "@/components/auth/social-buttons";
 import { Button, buttonClass } from "@/components/ui/button";
@@ -33,9 +34,10 @@ export function SignUpForm({
   oauthProviders?: OAuthProviderId[];
 }) {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const hydrated = useHydrated();
+  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<FieldName, React.ReactNode>>
@@ -43,7 +45,7 @@ export function SignUpForm({
   const [emailTaken, setEmailTaken] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  function validate() {
+  function validate({ name, email, password }: Record<FieldName, string>) {
     const next: Partial<Record<FieldName, React.ReactNode>> = {};
     if (!name.trim()) next.name = "Enter your name.";
     if (!email.trim()) next.email = "Enter your email address.";
@@ -60,7 +62,11 @@ export function SignUpForm({
     setError(null);
     setEmailTaken(false);
 
-    const invalid = validate();
+    const name = nameRef.current?.value ?? "";
+    const email = emailRef.current?.value ?? "";
+    const password = passwordRef.current?.value ?? "";
+
+    const invalid = validate({ name, email, password });
     setFieldErrors(invalid);
     if (Object.keys(invalid).length > 0) {
       const first = (["name", "email", "password"] as const).find(
@@ -103,10 +109,9 @@ export function SignUpForm({
             Name
           </label>
           <input
+            ref={nameRef}
             id="signup-name"
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
             autoComplete="name"
             aria-invalid={Boolean(fieldErrors.name)}
             aria-describedby={fieldErrors.name ? "signup-name-error" : undefined}
@@ -122,10 +127,9 @@ export function SignUpForm({
             Email
           </label>
           <input
+            ref={emailRef}
             id="signup-email"
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
             aria-invalid={Boolean(fieldErrors.email) || emailTaken}
             aria-describedby={
@@ -159,9 +163,8 @@ export function SignUpForm({
             Password
           </label>
           <PasswordInput
+            ref={passwordRef}
             id="signup-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             autoComplete="new-password"
             aria-invalid={Boolean(fieldErrors.password)}
             aria-describedby={
@@ -191,7 +194,13 @@ export function SignUpForm({
           </p>
         )}
 
-        <Button type="submit" size="lg" disabled={loading} className="mt-2">
+        <Button
+          type="submit"
+          size="lg"
+          disabled={loading || !hydrated}
+          aria-busy={!hydrated || loading}
+          className="mt-2"
+        >
           {loading ? "Creating account…" : "Sign up"}
         </Button>
       </form>

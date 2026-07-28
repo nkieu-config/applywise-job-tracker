@@ -8,7 +8,7 @@ import { inputClass } from "@/components/ui/form-styles";
 export function PasswordInput({
   className,
   ...props
-}: Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">) {
+}: Omit<React.ComponentPropsWithRef<"input">, "type">) {
   const [visible, setVisible] = useState(false);
   const Icon = visible ? EyeOff : Eye;
 

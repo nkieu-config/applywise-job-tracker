@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
+import { useHydrated } from "@/lib/use-hydrated";
 import { Button, buttonClass } from "@/components/ui/button";
 import { PasswordInput } from "@/components/ui/password-input";
 import {
@@ -13,14 +14,18 @@ import {
 
 export function ResetPasswordForm({ token }: { token: string | null }) {
   const router = useRouter();
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
+  const hydrated = useHydrated();
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const confirmRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!token) return;
+
+    const password = passwordRef.current?.value ?? "";
+    const confirm = confirmRef.current?.value ?? "";
 
     if (password !== confirm) {
       setError("The two passwords don't match.");
@@ -69,9 +74,8 @@ export function ResetPasswordForm({ token }: { token: string | null }) {
           New password
         </label>
         <PasswordInput
+          ref={passwordRef}
           id="reset-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
           required
           minLength={8}
           autoComplete="new-password"
@@ -90,9 +94,8 @@ export function ResetPasswordForm({ token }: { token: string | null }) {
           Confirm new password
         </label>
         <PasswordInput
+          ref={confirmRef}
           id="reset-confirm"
-          value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
           required
           minLength={8}
           autoComplete="new-password"
@@ -108,7 +111,13 @@ export function ResetPasswordForm({ token }: { token: string | null }) {
         </p>
       )}
 
-      <Button type="submit" size="lg" disabled={loading} className="mt-2">
+      <Button
+        type="submit"
+        size="lg"
+        disabled={loading || !hydrated}
+        aria-busy={!hydrated || loading}
+        className="mt-2"
+      >
         {loading ? "Updating…" : "Update password"}
       </Button>
     </form>

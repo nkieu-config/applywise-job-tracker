@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { useHydrated } from "@/lib/use-hydrated";
 import { Button } from "@/components/ui/button";
 import { inputClass, labelClass } from "@/components/ui/form-styles";
 
 export function ForgotPasswordForm() {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
+  const hydrated = useHydrated();
+  const emailRef = useRef<HTMLInputElement>(null);
+  const [sent, setSent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -15,6 +17,7 @@ export function ForgotPasswordForm() {
     e.preventDefault();
     setError(null);
     setLoading(true);
+    const email = emailRef.current?.value ?? "";
     try {
       const { error } = await authClient.requestPasswordReset({
         email,
@@ -25,21 +28,21 @@ export function ForgotPasswordForm() {
         setLoading(false);
         return;
       }
-      setSent(true);
+      setSent(email);
     } catch {
       setError("Something went wrong. Please try again.");
     }
     setLoading(false);
   }
 
-  if (sent) {
+  if (sent !== null) {
     return (
       <p
         role="status"
         className="rounded-lg bg-canvas-lavender px-4 py-3 text-center font-sans text-body text-ink"
       >
-        If an account exists for <b>{email}</b>, we&apos;ve sent it a reset
-        link. It expires in 1 hour.
+        If an account exists for <b>{sent}</b>, we&apos;ve sent it a reset link.
+        It expires in 1 hour.
       </p>
     );
   }
@@ -49,9 +52,8 @@ export function ForgotPasswordForm() {
       <label className={labelClass}>
         Email
         <input
+          ref={emailRef}
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
           className={inputClass}
@@ -67,7 +69,13 @@ export function ForgotPasswordForm() {
         </p>
       )}
 
-      <Button type="submit" size="lg" disabled={loading} className="mt-2">
+      <Button
+        type="submit"
+        size="lg"
+        disabled={loading || !hydrated}
+        aria-busy={!hydrated || loading}
+        className="mt-2"
+      >
         {loading ? "Sending…" : "Send reset link"}
       </Button>
     </form>
