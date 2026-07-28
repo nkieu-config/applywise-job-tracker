@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 
 const signInEmail = vi.fn();
 vi.mock("@/lib/auth-client", () => ({
@@ -21,6 +22,20 @@ beforeEach(() => {
 });
 
 describe("DemoButton", () => {
+  it("is disabled in the server HTML, before any handler exists", () => {
+    const html = renderToString(<DemoButton />);
+
+    expect(html).toContain("disabled");
+    expect(html).toContain('aria-busy="true"');
+  });
+
+  it("is enabled once hydrated", () => {
+    render(<DemoButton />);
+
+    expect(screen.getByRole("button")).toBeEnabled();
+    expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "false");
+  });
+
   it("navigates to the dashboard on a successful sign-in", async () => {
     signInEmail.mockResolvedValue({ error: null });
     render(<DemoButton />);
