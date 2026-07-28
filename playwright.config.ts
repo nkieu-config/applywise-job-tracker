@@ -15,15 +15,15 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  // One worker in CI: the app there is a single instance, and a suite running
-  // two-up against it manufactures contention no real deployment produces —
-  // on Vercel Fluid many small instances each serve a little concurrency.
-  // Serial workers alone were not enough, though. Prisma sizes its pool from
-  // the core count, so on a two-core runner it opened five connections, while
-  // one board render fans out into dozens of `<Link>` prefetches that each
-  // want one. The losers never rendered. The e2e job now asks for a larger
-  // pool explicitly rather than inheriting one sized for a machine.
-  workers: process.env.CI ? 1 : undefined,
+  // Two workers in CI, on a two-core runner shared with Postgres and the app.
+  // It was one for a long time, because a second worker used to tip the suite
+  // over: Prisma sized its pool from the core count and opened five
+  // connections, one board render fans out into dozens of `<Link>` prefetches
+  // that each want one, and whichever request lost never rendered at all. The
+  // e2e job now asks for a pool of 20 rather than inheriting one sized for a
+  // machine, which is what made the second worker affordable. Going wider is
+  // not: past the core count the workers only take turns more expensively.
+  workers: process.env.CI ? 2 : undefined,
   reporter: "list",
   use: {
     baseURL: BASE_URL,
