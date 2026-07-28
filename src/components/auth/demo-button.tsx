@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
 import { useToast } from "@/components/ui/toast";
+import { useHydrated } from "@/lib/use-hydrated";
 import { DEMO_EMAIL, DEMO_PASSWORD } from "@/lib/constants/demo";
 
 export function DemoButton({
@@ -21,6 +22,7 @@ export function DemoButton({
 }) {
   const router = useRouter();
   const toast = useToast();
+  const hydrated = useHydrated();
   const [demoLoading, setDemoLoading] = useState(false);
 
   function report(message: string) {
@@ -59,7 +61,8 @@ export function DemoButton({
     <button
       type="button"
       onClick={loginDemo}
-      disabled={disabled || demoLoading}
+      disabled={disabled || demoLoading || !hydrated}
+      aria-busy={!hydrated || demoLoading}
       className={className}
     >
       {demoLoading ? loadingLabel : label}

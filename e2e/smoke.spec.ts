@@ -99,6 +99,25 @@ test.describe("signed in as the demo account", () => {
 
 });
 
+test.describe("the demo CTA before JavaScript runs", () => {
+  test.use({
+    storageState: { cookies: [], origins: [] },
+    javaScriptEnabled: false,
+  });
+
+  test("advertises that it is not ready instead of swallowing the click", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    for (const name of ["Try the live demo", "Live demo"]) {
+      const cta = page.getByRole("button", { name, exact: true }).first();
+      await expect(cta).toBeVisible();
+      await expect(cta).toBeDisabled();
+    }
+  });
+});
+
 // Signing out revokes the server-side session that every other test shares, so
 // this flow runs in its own context with a fresh sign-in of its own.
 test.describe("session lifecycle", () => {
