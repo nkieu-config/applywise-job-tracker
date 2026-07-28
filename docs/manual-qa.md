@@ -33,7 +33,7 @@ worth clicking.
 | Sign in / sign up, applications CRUD, the board, Today | `DATABASE_URL`, `DIRECT_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` |
 | Resume upload + "View PDF" | `BLOB_READ_WRITE_TOKEN` |
 | Every AI action — read a posting, score resumes, tailor, prep, coach, autofill | `GEMINI_API_KEY` |
-| Password-reset email | `RESEND_API_KEY`, `EMAIL_FROM` |
+| Sign-up verification email | `RESEND_API_KEY`, `EMAIL_FROM` |
 | The AI usage page in the nav | `ADMIN_EMAILS` (your address) |
 
 ## Checklist

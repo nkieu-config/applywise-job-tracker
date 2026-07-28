@@ -19,20 +19,11 @@ const PAGES = [
 
 // Every screen someone meets before they have an account — the landing page
 // being the one a visitor may only ever see. Checked signed out, which is how
-// they are actually met. The password screens serve only while mail can be
-// delivered, so CI supplies a placeholder key; the reset screen appears twice
-// because a token renders the form and no token renders the expired-link state,
-// and only one of the two is on screen at a time.
+// they are actually met.
 const PUBLIC_PAGES = [
   { name: "Landing page", path: "/" },
   { name: "Sign in", path: "/sign-in" },
   { name: "Sign up", path: "/sign-up" },
-  { name: "Forgot password", path: "/forgot-password" },
-  { name: "Reset password, link expired", path: "/reset-password" },
-  {
-    name: "Reset password, form",
-    path: "/reset-password?token=e2e-placeholder-token",
-  },
 ];
 
 const DESK_TABS = ["Match", "Tailor", "Prep"] as const;

@@ -146,13 +146,10 @@ jobs:
       BETTER_AUTH_SECRET: ci-e2e-secret-used-only-by-this-throwaway-container
       BETTER_AUTH_URL: http://localhost:3000
       BASE_URL: http://localhost:3000
-      # The accessibility suite checks two groups of screens that the app hides
-      # unless these are set: /dashboard/ai-usage answers notFound() to anyone
-      # outside ADMIN_EMAILS, and /forgot-password answers notFound() while no
-      # mail key exists. Both would otherwise scan clean by never rendering.
-      # The key is a placeholder — nothing in this suite submits either form.
+      # /dashboard/ai-usage answers notFound() to anyone outside ADMIN_EMAILS,
+      # so without this the accessibility suite would scan it clean by never
+      # rendering it.
       ADMIN_EMAILS: demo@jobtracker.app
-      RESEND_API_KEY: re_ci_placeholder_no_mail_is_sent
 
     services:
       postgres:

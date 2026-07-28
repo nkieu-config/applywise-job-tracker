@@ -42,29 +42,21 @@ See [.env.example](../.env.example). `.env` files are gitignored.
 | `CRON_SECRET` | Bearer token Vercel Cron uses to call `/api/cron/*` (optional; the route refuses to run when unset) |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | GitHub OAuth app credentials (optional — see below) |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth client credentials (optional — see below) |
-| `RESEND_API_KEY` | [Resend](https://resend.com) key for outbound mail (optional — see below) |
-| `EMAIL_FROM` | Sender for those mails; defaults to `Applywise <onboarding@resend.dev>` |
+| `RESEND_API_KEY` | [Resend](https://resend.com) key for the sign-up verification mail (optional — see below) |
+| `EMAIL_FROM` | Sender for that mail; defaults to `Applywise <onboarding@resend.dev>` |
 
 Optional knobs (`AI_USAGE_DISABLED`, `EVAL_RPM`, `EVAL_MAX_ATTEMPTS`, `EVAL_JUDGE_MODEL`, `BASE_URL`) are documented in `.env.example`.
 
 ### Outbound email (optional)
 
-Two flows send mail: password reset and the sign-up verification link. Both are
-fully implemented and both switch themselves off when `RESEND_API_KEY` is unset
-— `/forgot-password` returns 404, the sign-in page stops offering the link, and
-`sendEmail` logs to the console instead of throwing. Locally that console log is
-usually what you want; the reset link is printed and can be pasted straight into
-the browser.
+One flow sends mail: the sign-up verification link. It switches itself off when
+`RESEND_API_KEY` is unset — `sendEmail` logs to the console instead of throwing,
+which is usually what you want locally.
 
-Set the key and the flow turns on everywhere at once — but note that
-`/forgot-password` is statically prerendered, so `emailIsDeliverable` is read at
-**build** time, not at boot. Adding the variable to a running deployment changes
-nothing until it is rebuilt; on Vercel that means a redeploy, and in CI it means
-the key has to be in the job env before `npm run build`, not just before the
-server starts. One further caveat: until a domain is verified in Resend, the
-account can only deliver to its own registered address. Better Auth runs `sendResetPassword`
-through a background-task wrapper that swallows failures, so a request for any
-other address still answers "check your email" and nothing arrives. See
+Until a domain is verified in Resend, the account can only deliver to its own
+registered address. Better Auth runs `sendVerificationEmail` through a
+background-task wrapper that swallows failures, so a send to any other address
+fails silently and the request still answers success. See
 [architecture.md](architecture.md) for why `requireEmailVerification` stays off
 until a verified sender exists.
 

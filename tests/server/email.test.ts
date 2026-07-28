@@ -10,8 +10,8 @@ vi.mock("resend", () => ({
 
 const message = {
   to: "candidate@example.com",
-  subject: "Reset your Applywise password",
-  text: "Reset it here: https://example.com/reset-password/secret-token",
+  subject: "Verify your email for Applywise",
+  text: "Confirm this address here: https://example.com/verify/secret-token",
 };
 
 async function loadSendEmail(apiKey: string, nodeEnv: string) {

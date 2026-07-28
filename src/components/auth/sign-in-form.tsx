@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { signIn } from "@/lib/auth-client";
 import { useHydrated } from "@/lib/use-hydrated";
 import { DemoButton } from "@/components/auth/demo-button";
@@ -18,12 +17,8 @@ import {
 import type { OAuthProviderId } from "@/lib/oauth-providers";
 
 export function SignInForm({
-  passwordWasReset = false,
-  canResetPassword = false,
   oauthProviders = [],
 }: {
-  passwordWasReset?: boolean;
-  canResetPassword?: boolean;
   oauthProviders?: OAuthProviderId[];
 }) {
   const router = useRouter();
@@ -62,15 +57,6 @@ export function SignInForm({
 
   return (
     <>
-      {passwordWasReset && !error && (
-        <p
-          role="status"
-          className="mb-5 rounded-lg bg-canvas-lavender px-4 py-3 text-center font-sans text-body text-ink"
-        >
-          Your password has been updated. Sign in with it below.
-        </p>
-      )}
-
       <form onSubmit={onSubmit} className="flex flex-col gap-5">
         <label className={labelClass}>
           Email
@@ -84,19 +70,9 @@ export function SignInForm({
         </label>
 
         <div className={fieldClass}>
-          <div className="flex items-center justify-between gap-2">
-            <label htmlFor="signin-password" className={fieldLabelClass}>
-              Password
-            </label>
-            {canResetPassword && (
-              <Link
-                href="/forgot-password"
-                className="-my-2 py-2 font-sans text-body font-bold text-link-blue transition-colors hover:text-link-hover hover:underline"
-              >
-                Forgot?
-              </Link>
-            )}
-          </div>
+          <label htmlFor="signin-password" className={fieldLabelClass}>
+            Password
+          </label>
           <PasswordInput
             ref={passwordRef}
             id="signin-password"
