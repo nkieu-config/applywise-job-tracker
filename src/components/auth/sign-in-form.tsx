@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "@/lib/auth-client";
+import { useHydrated } from "@/lib/use-hydrated";
 import { DemoButton } from "@/components/auth/demo-button";
 import { SocialButtons } from "@/components/auth/social-buttons";
 import { Button, buttonClass } from "@/components/ui/button";
@@ -26,8 +27,9 @@ export function SignInForm({
   oauthProviders?: OAuthProviderId[];
 }) {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const hydrated = useHydrated();
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +38,10 @@ export function SignInForm({
     setError(null);
     setLoading(true);
     try {
-      const { error } = await signIn.email({ email, password });
+      const { error } = await signIn.email({
+        email: emailRef.current?.value ?? "",
+        password: passwordRef.current?.value ?? "",
+      });
       if (error) {
         setError(
           error.code === "EMAIL_NOT_VERIFIED"
@@ -70,9 +75,8 @@ export function SignInForm({
         <label className={labelClass}>
           Email
           <input
+            ref={emailRef}
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="email"
             className={inputClass}
@@ -94,9 +98,8 @@ export function SignInForm({
             )}
           </div>
           <PasswordInput
+            ref={passwordRef}
             id="signin-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
           />
@@ -111,7 +114,13 @@ export function SignInForm({
           </p>
         )}
 
-        <Button type="submit" size="lg" disabled={loading} className="mt-2">
+        <Button
+          type="submit"
+          size="lg"
+          disabled={loading || !hydrated}
+          aria-busy={!hydrated || loading}
+          className="mt-2"
+        >
           {loading ? "Signing in…" : "Sign in"}
         </Button>
       </form>

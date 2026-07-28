@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "@/lib/auth-client";
+import { useHydrated } from "@/lib/use-hydrated";
 import { buttonClass } from "@/components/ui/button";
 import { OAUTH_PROVIDERS, type OAuthProviderId } from "@/lib/oauth-providers";
 
@@ -33,6 +34,7 @@ export function SocialButtons({
   onError?: (msg: string | null) => void;
 }) {
   const [pending, setPending] = useState<OAuthProviderId | null>(null);
+  const hydrated = useHydrated();
   const available = OAUTH_PROVIDERS.filter((p) => providers.includes(p.id));
 
   if (available.length === 0) return null;
@@ -65,7 +67,8 @@ export function SocialButtons({
           key={provider.id}
           type="button"
           onClick={() => continueWith(provider.id)}
-          disabled={disabled || pending !== null}
+          disabled={disabled || pending !== null || !hydrated}
+          aria-busy={!hydrated || pending === provider.id}
           className={buttonClass({
             variant: "outline",
             size: "lg",
