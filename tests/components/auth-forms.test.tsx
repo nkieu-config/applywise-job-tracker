@@ -54,7 +54,7 @@ describe("auth forms submit what the field holds, not what React saw", () => {
       "correct-horse",
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Sign in", exact: true }));
+    fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
 
     await waitFor(() =>
       expect(signInEmail).toHaveBeenCalledWith({
@@ -73,7 +73,7 @@ describe("auth forms submit what the field holds, not what React saw", () => {
       "correct-horse-battery",
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Sign up", exact: true }));
+    fireEvent.click(screen.getByRole("button", { name: "Sign up" }));
 
     await waitFor(() =>
       expect(signUpEmail).toHaveBeenCalledWith({
@@ -93,7 +93,7 @@ describe("auth forms submit what the field holds, not what React saw", () => {
       "correct-horse-battery",
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Sign up", exact: true }));
+    fireEvent.click(screen.getByRole("button", { name: "Sign up" }));
 
     await waitFor(() => expect(signUpEmail).toHaveBeenCalled());
     expect(screen.queryByText("Enter your name.")).toBeNull();
