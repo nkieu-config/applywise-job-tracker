@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -46,8 +50,27 @@ jobs:
           node-version: 22
           cache: npm
 
+      # `prisma generate` writes outside node_modules, so the generated client
+      # is cached beside it — restoring one without the other yields a tree
+      # that installs clean and then cannot import its own database types.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        id: deps
+        with:
+          path: |
+            node_modules
+            src/generated/prisma
+          key: deps-${{ runner.os }}-node22-${{ hashFiles('package-lock.json', 'prisma/schema.prisma') }}
+
       # postinstall runs `prisma generate` (no DB secrets needed).
-      - run: npm ci
+      - if: steps.deps.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .next/cache
+          key: next-verify-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
+          restore-keys: |
+            next-verify-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
 
       - run: npm run lint
 
@@ -161,13 +184,50 @@ jobs:
           node-version: 22
           cache: npm
 
-      - run: npm ci
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        id: deps
+        with:
+          path: |
+            node_modules
+            src/generated/prisma
+          key: deps-${{ runner.os }}-node22-${{ hashFiles('package-lock.json', 'prisma/schema.prisma') }}
+
+      - if: steps.deps.outputs.cache-hit != 'true'
+        run: npm ci
+
+      # Keyed on the resolved Playwright version rather than the lockfile hash:
+      # the browser build is what the cache holds, and it only changes when
+      # that version does.
+      - name: Resolve the Playwright version
+        id: playwright
+        run: |
+          echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        id: browser
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
 
       - name: Install the browser
+        if: steps.browser.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+
+      # The cache holds the browser, not the system libraries it links against,
+      # and those live in apt rather than the home directory.
+      - name: Install the browser's system libraries
+        if: steps.browser.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
 
       - name: Apply migrations
         run: npx prisma migrate deploy
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .next/cache
+          key: next-e2e-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
+          restore-keys: |
+            next-e2e-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
 
       - run: npm run build
 
