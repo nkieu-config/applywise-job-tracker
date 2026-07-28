@@ -125,7 +125,7 @@ jobs:
     timeout-minutes: 20
 
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/job_tracker_e2e?sslmode=disable
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/job_tracker_e2e?sslmode=disable&connection_limit=20
       DIRECT_URL: postgresql://postgres:postgres@localhost:5432/job_tracker_e2e?sslmode=disable
       BETTER_AUTH_SECRET: ci-e2e-secret-used-only-by-this-throwaway-container
       BETTER_AUTH_URL: http://localhost:3000
