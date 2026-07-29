@@ -137,11 +137,14 @@ export default async function ApplicationsPage({
             description, and let AI do the rest.
           </EmptyState>
         ) : (
-          <div className="flex flex-col gap-2">
-            <ApplicationsBoard applications={boardApplications} />
+          <div className="flex flex-col gap-3">
+            {/* Above the board, not below it: stacked on a phone this sat 2995px
+                down a 3111px page, so the grip on the first card was met almost
+                three screens before anything explained it. */}
             <p className="font-sans text-caption text-ink-mute">
-              Drag a card between columns to update its status.
+              Use the grip on a card to move it, or drag it between columns.
             </p>
+            <ApplicationsBoard applications={boardApplications} />
           </div>
         )
       ) : (
