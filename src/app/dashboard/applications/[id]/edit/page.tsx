@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireSession } from "@/server/get-session";
 import { formatDate } from "@/lib/format";
 import { getApplication } from "@/server/data/applications";
 import { ApplicationForm } from "@/components/applications/application-form";
 import { updateApplication } from "@/actions/applications";
+import { BackLink } from "@/components/ui/back-link";
 
 export async function generateMetadata({
   params,
@@ -38,12 +38,7 @@ export default async function EditApplicationPage({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <Link
-          href={`/dashboard/applications/${application.id}`}
-          className="text-body font-sans font-bold text-ink-mute hover:text-ink transition-colors"
-        >
-          ← Back
-        </Link>
+        <BackLink href={`/dashboard/applications/${application.id}`}>← Back</BackLink>
         <h1 className="mt-2 font-display-md text-ink tracking-tight">
           Edit application
         </h1>
