@@ -21,6 +21,11 @@ export default function GlobalError({
 
   return (
     <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Something went wrong · Applywise</title>
+      </head>
       <body
         style={{
           minHeight: "100vh",
@@ -31,7 +36,7 @@ export default function GlobalError({
           padding: "1.5rem",
         }}
       >
-        <div style={{ textAlign: "center" }}>
+        <main style={{ textAlign: "center" }}>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700 }}>
             Something went wrong
           </h1>
@@ -39,6 +44,7 @@ export default function GlobalError({
             An unexpected error occurred. Please try again.
           </p>
           <button
+            type="button"
             onClick={reset}
             style={{
               marginTop: "1.5rem",
@@ -53,7 +59,15 @@ export default function GlobalError({
           >
             Try again
           </button>
-        </div>
+          <p style={{ marginTop: "1rem" }}>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages --
+                the root layout is what crashed, so a client-side navigation
+                would re-enter the broken tree; this needs a full page load. */}
+            <a href="/" style={{ color: "#4a154b", fontWeight: 700 }}>
+              Back to Applywise
+            </a>
+          </p>
+        </main>
       </body>
     </html>
   );
