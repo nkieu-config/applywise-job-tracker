@@ -14,7 +14,7 @@ export type SendEmailInput = {
 
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
 
-export const emailIsDeliverable =
+const emailIsDeliverable =
   Boolean(RESEND_API_KEY) || process.env.NODE_ENV !== "production";
 
 export async function sendEmail({

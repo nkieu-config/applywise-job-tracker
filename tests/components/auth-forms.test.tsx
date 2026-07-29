@@ -4,16 +4,10 @@ import { renderToString } from "react-dom/server";
 
 const signInEmail = vi.fn();
 const signUpEmail = vi.fn();
-const requestPasswordReset = vi.fn();
-const resetPassword = vi.fn();
 
 vi.mock("@/lib/auth-client", () => ({
   signIn: { email: (...a: unknown[]) => signInEmail(...a), social: vi.fn() },
   signUp: { email: (...a: unknown[]) => signUpEmail(...a) },
-  authClient: {
-    requestPasswordReset: (...a: unknown[]) => requestPasswordReset(...a),
-    resetPassword: (...a: unknown[]) => resetPassword(...a),
-  },
 }));
 
 const push = vi.fn();
@@ -22,12 +16,6 @@ vi.mock("@/components/ui/toast", () => ({ useToast: () => vi.fn() }));
 
 const { SignInForm } = await import("@/components/auth/sign-in-form");
 const { SignUpForm } = await import("@/components/auth/sign-up-form");
-const { ForgotPasswordForm } = await import(
-  "@/components/auth/forgot-password-form"
-);
-const { ResetPasswordForm } = await import(
-  "@/components/auth/reset-password-form"
-);
 
 // Typing before React hydrates reaches the DOM but never reaches React: no
 // change event is delivered, so state stays empty while the field visibly
@@ -40,8 +28,6 @@ function typeUnseen(field: HTMLElement, value: string) {
 beforeEach(() => {
   signInEmail.mockReset().mockResolvedValue({ error: null });
   signUpEmail.mockReset().mockResolvedValue({ error: null });
-  requestPasswordReset.mockReset().mockResolvedValue({ error: null });
-  resetPassword.mockReset().mockResolvedValue({ error: null });
   push.mockReset();
 });
 
@@ -99,52 +85,6 @@ describe("auth forms submit what the field holds, not what React saw", () => {
     expect(screen.queryByText("Enter your name.")).toBeNull();
     expect(screen.queryByText("Enter your email address.")).toBeNull();
   });
-
-  it("forgot-password sends text typed before hydration", async () => {
-    render(<ForgotPasswordForm />);
-    typeUnseen(screen.getByLabelText("Email"), "ada@example.com");
-
-    fireEvent.click(screen.getByRole("button", { name: "Send reset link" }));
-
-    await waitFor(() =>
-      expect(requestPasswordReset).toHaveBeenCalledWith({
-        email: "ada@example.com",
-        redirectTo: "/reset-password",
-      }),
-    );
-    expect(await screen.findByText("ada@example.com")).toBeInTheDocument();
-  });
-
-  it("reset-password compares what the two fields hold, not two empty strings", async () => {
-    render(<ResetPasswordForm token="tok" />);
-    typeUnseen(screen.getByLabelText("New password"), "correct-horse-battery");
-    typeUnseen(screen.getByLabelText("Confirm new password"), "something-else");
-
-    fireEvent.click(screen.getByRole("button", { name: "Update password" }));
-
-    expect(
-      await screen.findByText("The two passwords don't match."),
-    ).toBeInTheDocument();
-    expect(resetPassword).not.toHaveBeenCalled();
-  });
-
-  it("reset-password sends text typed before hydration", async () => {
-    render(<ResetPasswordForm token="tok" />);
-    typeUnseen(screen.getByLabelText("New password"), "correct-horse-battery");
-    typeUnseen(
-      screen.getByLabelText("Confirm new password"),
-      "correct-horse-battery",
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Update password" }));
-
-    await waitFor(() =>
-      expect(resetPassword).toHaveBeenCalledWith({
-        newPassword: "correct-horse-battery",
-        token: "tok",
-      }),
-    );
-  });
 });
 
 describe("auth submit buttons are disabled in the server HTML", () => {
@@ -163,8 +103,6 @@ describe("auth submit buttons are disabled in the server HTML", () => {
   const CASES: [string, React.ReactElement, string][] = [
     ["sign-in", <SignInForm key="a" />, "Sign in"],
     ["sign-up", <SignUpForm key="b" />, "Sign up"],
-    ["forgot-password", <ForgotPasswordForm key="c" />, "Send reset link"],
-    ["reset-password", <ResetPasswordForm key="d" token="tok" />, "Update password"],
   ];
 
   it.each(CASES)("%s", (_name, element, label) => {

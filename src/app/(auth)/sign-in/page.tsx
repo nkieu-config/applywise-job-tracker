@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { emailIsDeliverable } from "@/server/email";
 import { enabledOAuthProviders } from "@/server/oauth";
 import { SignInForm } from "@/components/auth/sign-in-form";
 import { LogoMark } from "@/components/ui/logo";
@@ -9,13 +8,7 @@ export const metadata: Metadata = {
   title: "Sign in",
 };
 
-export default async function SignInPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ reset?: string }>;
-}) {
-  const { reset } = await searchParams;
-
+export default function SignInPage() {
   return (
     <div className="flex flex-1 items-center justify-center bg-canvas px-6 py-16">
       <div className="w-full max-w-sm">
@@ -31,11 +24,7 @@ export default async function SignInPage({
           Sign in to pick up where you left off.
         </p>
 
-        <SignInForm
-          passwordWasReset={reset === "1"}
-          canResetPassword={emailIsDeliverable}
-          oauthProviders={enabledOAuthProviders()}
-        />
+        <SignInForm oauthProviders={enabledOAuthProviders()} />
 
         <p className="mt-8 text-center font-sans text-body text-ink-mute">
           Don&apos;t have an account?{" "}
