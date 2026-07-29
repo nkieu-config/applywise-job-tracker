@@ -56,3 +56,6 @@ yarn-error.log*
 /test-results
 /e2e/.auth
 /playwright-report
+
+# personal design reference
+DESIGN.md
