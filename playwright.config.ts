@@ -15,15 +15,15 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  // Two workers in CI, on a two-core runner shared with Postgres and the app.
-  // It was one for a long time, because a second worker used to tip the suite
-  // over: Prisma sized its pool from the core count and opened five
-  // connections, one board render fans out into dozens of `<Link>` prefetches
-  // that each want one, and whichever request lost never rendered at all. The
-  // e2e job now asks for a pool of 20 rather than inheriting one sized for a
-  // machine, which is what made the second worker affordable. Going wider is
-  // not: past the core count the workers only take turns more expensively.
-  workers: process.env.CI ? 2 : undefined,
+  // One worker in CI. Two was tried: with the connection pool asked for
+  // explicitly rather than inherited from the core count, the suite ran 46s
+  // faster and came up green four times running — and then failed on the fifth
+  // with the same board test, the same 15s, the same pass on retry that the
+  // pool fix was meant to end. Four clean runs was not evidence, only a small
+  // sample. Whatever the second worker contends for on a two-core runner
+  // shared with Postgres and the app, it is not only database connections, and
+  // a gate that is right most of the time is not a gate.
+  workers: process.env.CI ? 1 : undefined,
   reporter: "list",
   use: {
     baseURL: BASE_URL,
