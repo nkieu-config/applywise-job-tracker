@@ -168,7 +168,7 @@ export function CommandPalette() {
                   onClick={() => go(command)}
                   aria-current={i === active ? "true" : undefined}
                   className={cn(
-                    "flex w-full items-baseline justify-between gap-4 px-4 py-2.5 text-left",
+                    "flex w-full items-baseline justify-between gap-4 px-4 py-3 text-left",
                     i === active ? "bg-surface-hover" : "",
                   )}
                 >

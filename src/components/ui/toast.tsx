@@ -94,14 +94,14 @@ function ToastRegion({
       {toasts.map((t) => (
         <div
           key={t.id}
-          className={`animate-rise pointer-events-auto flex items-center justify-between gap-3 rounded-xl border px-4 py-3 font-sans text-body font-bold shadow-lg ${VARIANT_CLASSES[t.variant]}`}
+          className={`animate-rise pointer-events-auto relative flex items-center justify-between gap-3 rounded-xl border px-4 py-3 font-sans text-body font-bold shadow-lg ${VARIANT_CLASSES[t.variant]}`}
         >
           <span>{t.message}</span>
           <button
             type="button"
             onClick={() => onDismiss(t.id)}
             aria-label="Dismiss notification"
-            className="shrink-0 text-body-lg leading-none opacity-70 hover:opacity-100"
+            className="relative -my-2 -mr-1 inline-flex size-8 shrink-0 items-center justify-center rounded-md text-body-lg leading-none opacity-70 after:absolute after:-inset-1.5 after:content-[''] hover:opacity-100"
           >
             ×
           </button>

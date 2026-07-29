@@ -67,7 +67,7 @@ const BOARD_SIZES =
 // reads these values and fails the build when they stop matching the suites.
 const STATS = [
   { value: "6", label: "AI features" },
-  { value: "437", label: "automated tests" },
+  { value: "441", label: "automated tests" },
   { value: "6", label: "AI eval suites" },
 ];
 
