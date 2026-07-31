@@ -141,8 +141,29 @@ if (!userId) {
 await ex(`UPDATE "user" SET "emailVerified" = true WHERE id = $1`, [userId], [TEXT]);
 
 // 2. Reset the demo user's data (idempotent re-seed).
-await ex(`DELETE FROM "application" WHERE "userId" = $1`, [userId], [TEXT]);
-await ex(`DELETE FROM "resume_version" WHERE "userId" = $1`, [userId], [TEXT]);
+//
+// Cleared by owner *and* by id. Every row below carries a fixed id, so those
+// ids are this script's own namespace — but they are unique across the table,
+// not per user. Clearing only by owner meant a demo account under a new
+// address could never be seeded while the previous one still held them, which
+// is exactly what a rename runs into.
+const ownedIds = [
+  ...RESUMES.map((r) => r.id),
+  ...APPS.map((a) => a.id),
+];
+const idList = ownedIds.map((_, i) => `$${i + 2}`).join(",");
+const idTypes = ownedIds.map(() => TEXT);
+
+await ex(
+  `DELETE FROM "application" WHERE "userId" = $1 OR id IN (${idList})`,
+  [userId, ...ownedIds],
+  [TEXT, ...idTypes],
+);
+await ex(
+  `DELETE FROM "resume_version" WHERE "userId" = $1 OR id IN (${idList})`,
+  [userId, ...ownedIds],
+  [TEXT, ...idTypes],
+);
 
 // 3. Resume versions with extractable text (drives the skill-gap demo).
 for (const resume of RESUMES) {
