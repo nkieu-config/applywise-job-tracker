@@ -29,7 +29,7 @@ export default defineConfig({
     baseURL: BASE_URL,
     viewport: { ...CONTEXT_OPTIONS.viewport },
     colorScheme: "light",
-    trace: "on-first-retry",
+    trace: "retain-on-failure",
   },
   // The suite runs against one server instance sharing a CI runner with
   // Postgres and the browser, so the first hit on a route pays for cold Prisma
