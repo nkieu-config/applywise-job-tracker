@@ -55,6 +55,35 @@ test.describe("mutating flows on a throwaway account", () => {
       ).toBeVisible();
     });
 
+    // Moving a card used to mean dragging it. On a phone the columns stack, so
+    // the drop target sat screens away behind a slow auto-scroll, and by
+    // keyboard dnd-kit moved the card 25px per arrow press. This does the same
+    // job without a pointer at all.
+    await test.step("move it on the board without a pointer", async () => {
+      await page.goto("/dashboard/applications");
+
+      await page
+        .getByRole("button", { name: /^Move Platform Engineer at Northwind Labs/ })
+        .focus();
+      await page.keyboard.press("Enter");
+
+      const dialog = page.getByRole("dialog");
+      await expect(dialog).toBeVisible();
+      await expect(dialog.getByRole("button", { name: "Saved" })).toBeFocused();
+
+      await page.keyboard.press("Tab");
+      await expect(dialog.getByRole("button", { name: "Applied" })).toBeFocused();
+      await page.keyboard.press("Enter");
+
+      await expect(dialog).toBeHidden();
+      await expect(page.getByText("Moved to Applied.")).toBeVisible();
+
+      await page.goto("/dashboard/applications?view=list&status=APPLIED");
+      await expect(
+        page.getByRole("link", { name: /Platform Engineer/ }),
+      ).toBeVisible();
+    });
+
     await test.step("edit the role and move it to Interview", async () => {
       await page.goto(detailUrl);
       await page.getByRole("link", { name: "Edit", exact: true }).click();

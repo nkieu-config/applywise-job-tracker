@@ -124,10 +124,6 @@ await shootFullPage(page, "the-read.png", CONTEXT_OPTIONS.viewport.height);
 await shootSection("Skills analysis", "skills-analysis.png");
 await shootSection("Resume fit", "resume-fit.png");
 
-await page.getByRole("tab", { name: "Tailor" }).click();
-await settle(page);
-await shootFullPage(page, "tailor.png", 1200);
-
 // The drill, mid-question with the answer key still hidden.
 await page.getByRole("tab", { name: "Prep" }).click();
 await settle(page);

@@ -20,6 +20,7 @@ import { TailorBullets } from "@/components/applications/tailor-bullets";
 import { InterviewPrep } from "@/components/applications/interview-prep";
 import { PostingPane } from "@/components/applications/posting-pane";
 import { MarkedPosting } from "@/components/applications/marked-posting";
+import { BackLink } from "@/components/ui/back-link";
 
 export async function generateMetadata({
   params,
@@ -208,12 +209,7 @@ export default async function ApplicationDetailPage({
   return (
     <div className="flex flex-col gap-7">
       <div>
-        <Link
-          href="/dashboard/applications"
-          className="-m-2 inline-block p-2 font-sans text-caption font-medium text-ink-mute transition-colors hover:text-ink"
-        >
-          ← Applications
-        </Link>
+        <BackLink href="/dashboard/applications">← Applications</BackLink>
         <div className="mt-3 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
           <div className="min-w-0">
             <h1 className="font-serif text-[2rem] font-semibold leading-tight tracking-tight text-ink">

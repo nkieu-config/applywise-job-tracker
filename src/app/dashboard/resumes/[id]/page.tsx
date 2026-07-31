@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireSession } from "@/server/get-session";
 import { formatDisplayDate } from "@/lib/format";
@@ -7,6 +6,7 @@ import { getResumeVersion } from "@/server/data/resumes";
 import { DeleteResumeButton } from "@/components/resumes/delete-resume-button";
 import { buttonClass } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
+import { BackLink } from "@/components/ui/back-link";
 
 export async function generateMetadata({
   params,
@@ -36,12 +36,7 @@ export default async function ResumeDetailPage({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <Link
-          href="/dashboard/resumes"
-          className="text-body font-sans font-bold text-ink-mute hover:text-ink transition-colors"
-        >
-          ← Resumes
-        </Link>
+        <BackLink href="/dashboard/resumes">← Resumes</BackLink>
         <div className="mt-2 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div>
             <h1 className="font-display-md text-ink tracking-tight">

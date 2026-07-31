@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Button, buttonClass } from "@/components/ui/button";
+import { LogoMark } from "@/components/ui/logo";
 
 export default function Error({
   error,
@@ -17,9 +19,15 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-canvas px-6">
-      <div className="text-center">
-        <h1 className="font-display-md text-ink tracking-tight">
+    <main
+      id="main-content"
+      className="flex flex-1 items-center justify-center bg-canvas px-6 py-16"
+    >
+      <div className="flex flex-col items-center text-center">
+        <Link href="/" aria-label="Applywise">
+          <LogoMark size="lg" />
+        </Link>
+        <h1 className="mt-8 font-display-md text-ink tracking-tight">
           Something went wrong
         </h1>
         <p className="mt-2 font-sans text-body-lg text-ink-mute">
@@ -30,10 +38,18 @@ export default function Error({
             Reference: {error.digest}
           </p>
         )}
-        <Button size="lg" onClick={reset} className="mt-6">
-          Try again
-        </Button>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <Button size="lg" onClick={reset}>
+            Try again
+          </Button>
+          <Link
+            href="/"
+            className={buttonClass({ variant: "outline", size: "lg" })}
+          >
+            Back to Applywise
+          </Link>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

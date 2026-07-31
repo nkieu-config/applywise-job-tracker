@@ -1,6 +1,8 @@
+import { LoadingScreen } from "@/components/ui/loading-screen";
+
 export default function Loading() {
   return (
-    <div className="flex flex-col gap-6">
+    <LoadingScreen label="Loading this resume" className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <div className="h-5 w-24 animate-pulse rounded bg-hairline" />
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -18,6 +20,6 @@ export default function Loading() {
         <div className="h-6 w-40 animate-pulse rounded bg-hairline" />
         <div className="h-96 animate-pulse rounded-xl bg-hairline" />
       </div>
-    </div>
+    </LoadingScreen>
   );
 }

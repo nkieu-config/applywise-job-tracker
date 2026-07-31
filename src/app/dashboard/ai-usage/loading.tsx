@@ -1,6 +1,8 @@
+import { LoadingScreen } from "@/components/ui/loading-screen";
+
 export default function Loading() {
   return (
-    <div className="flex flex-col gap-8">
+    <LoadingScreen label="Loading AI usage" className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
         <div className="h-9 w-52 animate-pulse rounded bg-hairline" />
         <div className="h-5 w-full max-w-xl animate-pulse rounded bg-hairline" />
@@ -22,6 +24,6 @@ export default function Loading() {
           <div key={i} className="h-12 animate-pulse rounded-xl bg-hairline" />
         ))}
       </div>
-    </div>
+    </LoadingScreen>
   );
 }

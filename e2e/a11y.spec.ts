@@ -161,3 +161,33 @@ test("the desk tabs are reachable and operable from the keyboard alone", async (
   await expect(nowSelected).toBeFocused();
   await expect(nowSelected).not.toHaveText(before ?? "");
 });
+
+test("the skip link is a large enough target once it is focused", async ({
+  page,
+}) => {
+  await page.goto("/dashboard");
+  await page.waitForLoadState("networkidle");
+  await page.keyboard.press("Tab");
+
+  const skip = page.getByRole("link", { name: "Skip to content" });
+  await expect(skip).toBeFocused();
+
+  const box = await skip.boundingBox();
+  expect(box?.height ?? 0).toBeGreaterThanOrEqual(24);
+});
+
+test("the not-found screen is a landmarked page with a way back", async ({
+  page,
+}) => {
+  await page.goto("/dashboard/applications/does-not-exist");
+  await page.waitForLoadState("networkidle");
+
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Page not found" }),
+  ).toBeVisible();
+
+  await expect(page.locator("main")).toHaveCount(1);
+  await expect(
+    page.getByRole("link", { name: "Go to dashboard" }),
+  ).toBeVisible();
+});
