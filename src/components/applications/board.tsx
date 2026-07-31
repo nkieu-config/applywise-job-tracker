@@ -129,6 +129,7 @@ function BoardCard({
     <div ref={setNodeRef} className={`relative ${isDragging ? "opacity-40" : ""}`}>
       <Link
         href={`/dashboard/applications/${app.id}`}
+        prefetch={false}
         draggable={false}
         tabIndex={dragging ? -1 : 0}
         className="block rounded-xl border border-hairline bg-canvas py-2.5 pl-3 pr-9 transition-colors hover:border-primary-ink"
@@ -375,6 +376,7 @@ function RejectedStrip({
             <div key={app.id} className="relative w-full shrink-0 lg:w-40">
               <Link
                 href={`/dashboard/applications/${app.id}`}
+                prefetch={false}
                 className="block rounded-lg border border-hairline bg-canvas py-1.5 pl-3 pr-9 transition-colors hover:border-primary-ink"
               >
                 <p className="truncate font-sans text-fine font-medium text-ink">
