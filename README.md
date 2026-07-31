@@ -6,7 +6,7 @@
 
 **The job hunt is a reading problem. This is the tool I built to solve mine.** Applywise marks up a job posting against your resume — highlighting what you already have, underlining what you're missing, ranking your resume versions with vector embeddings, and drilling you on the interview questions the posting implies. Built solo as my capstone project, used daily in my real job search.
 
-**6 AI features, each with an eval suite · 441 tests + a 6-suite AI eval harness · ~14k lines of strict TypeScript (app, tests, evals)**
+**6 AI features, each with an eval suite · 441 tests + a 6-suite AI eval harness · ~20k lines of strict TypeScript (app, tests, e2e, evals, scripts)**
 
 ![The desk: a job posting with required skills highlighted where the resume covers them and underlined in red where it does not, beside the skills analysis and resume-fit panels](docs/screenshots/the-read.png)
 

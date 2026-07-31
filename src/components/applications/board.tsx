@@ -542,7 +542,7 @@ export function ApplicationsBoard({
       </div>
       <DragOverlay>
         {activeApp && (
-          <div className="w-60 rounded-xl border border-primary-ink bg-canvas py-2.5 pl-3 pr-9 shadow-[0_10px_30px_rgba(74,21,75,0.2)]">
+          <div className="w-60 rounded-xl border border-primary-ink bg-canvas py-2.5 pl-3 pr-9 shadow-lift">
             <CardContent app={activeApp} />
           </div>
         )}

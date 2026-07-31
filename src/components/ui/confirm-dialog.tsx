@@ -42,7 +42,7 @@ export function ConfirmDialog({
         if (!pending) onCancel();
       }}
       className={cardClass(
-        "m-auto w-full max-w-sm p-8 shadow-[0_20px_60px_rgba(74,21,75,0.15)] backdrop:bg-ink/40",
+        "m-auto w-full max-w-sm p-8 shadow-panel-lg backdrop:bg-ink/40",
       )}
     >
       <h2 id={titleId} className="font-sans text-title font-bold text-ink">

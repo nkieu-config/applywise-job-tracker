@@ -48,7 +48,7 @@ export default async function ResumesPage() {
               <li key={resume.id}>
                 <Link
                   href={`/dashboard/resumes/${resume.id}`}
-                  className="flex items-center justify-between gap-4 rounded-xl border border-hairline bg-canvas px-6 py-4 transition-shadow hover:shadow-[0_5px_20px_rgba(0,0,0,0.05)]"
+                  className="flex items-center justify-between gap-4 rounded-xl border border-hairline bg-canvas px-6 py-4 transition-shadow hover:shadow-card"
                 >
                   <span className="truncate font-sans font-bold text-ink">
                     {resume.label}
