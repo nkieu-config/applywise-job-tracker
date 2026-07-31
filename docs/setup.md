@@ -119,7 +119,7 @@ The three image scripts drive a running app, so start one first — `npm run bui
 
 ## Demo account
 
-`npm run seed` creates `demo@applywise.app` / `demotracker2026` with sample applications, multiple resume versions, and pre-computed high-fit/low-fit JD analyses so every AI feature has something to show. Start the server first (`npm run start &`), then run the seed.
+`npm run seed` creates `demo@jobtracker.app` / `demotracker2026` with sample applications, multiple resume versions, and pre-computed high-fit/low-fit JD analyses so every AI feature has something to show. Start the server first (`npm run start &`), then run the seed.
 
 ## Verifying a build
 

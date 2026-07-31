@@ -18,7 +18,7 @@
 
 | Field        | Value                 |
 | ------------ | --------------------- |
-| **Email**    | `demo@applywise.app` |
+| **Email**    | `demo@jobtracker.app` |
 | **Password** | `demotracker2026`     |
 
 Then open **Applications → Senior Backend Engineer (Acme Corp)**. It sits at the interview stage, so the desk opens on **Prep** — press *Practise* and the sheet turns into a drill, one question at a time with the answer key hidden. Switch to **Match** and the posting itself is marked up: **5 of its 6 required skills highlighted** where your resume backs them up, **Kubernetes underlined in red** where it does not. **Resume fit** ranks the three resume versions by cosine similarity, and **Tailor** regenerates bullets live, token by token. `⌘K` jumps to any application by name.
