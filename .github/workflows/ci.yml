@@ -149,7 +149,7 @@ jobs:
       # /dashboard/ai-usage answers notFound() to anyone outside ADMIN_EMAILS,
       # so without this the accessibility suite would scan it clean by never
       # rendering it.
-      ADMIN_EMAILS: demo@jobtracker.app
+      ADMIN_EMAILS: demo@applywise.app
 
     services:
       postgres:
