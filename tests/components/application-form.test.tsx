@@ -127,3 +127,26 @@ describe("ApplicationForm", () => {
     );
   });
 });
+
+describe("a rejected submit", () => {
+  it("puts focus on the first field that has to change", async () => {
+    const action = vi.fn().mockResolvedValue({
+      fieldErrors: { role: ["Role is required"] },
+      values: { company: "Acme Corp", role: "  " },
+    });
+    render(
+      <ApplicationForm
+        action={action}
+        submitLabel="Create"
+        cancelHref="/dashboard/applications"
+      />,
+    );
+
+    fireEvent.submit(screen.getByRole("button", { name: "Create" }).closest("form")!);
+
+    await waitFor(() =>
+      expect(document.querySelector('input[name="role"]')).toHaveFocus(),
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent("Role is required");
+  });
+});
