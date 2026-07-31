@@ -8,7 +8,7 @@
 
 **6 AI features, each with an eval suite · 444 tests + a 6-suite AI eval harness · ~20k lines of strict TypeScript (app, tests, e2e, evals, scripts)**
 
-![The desk: a job posting with required skills highlighted where the resume covers them and underlined in red where it does not, beside the skills analysis and resume-fit panels](docs/screenshots/the-read.png)
+![The desk: a job posting with required skills highlighted where the resume covers them and underlined in red where it does not, beside the skills analysis and resume-fit panels](docs/screenshots/the-read.webp)
 
 *The posting on the left, you on the right. Highlighted where your resume backs the requirement up; underlined in red where it does not.*
 
@@ -106,27 +106,27 @@ Two of the AI features stream — bullet tailoring and the interview prep sheet 
 
 Today opens on an agenda derived from the pipeline — a deadline inside the week, an interview with no prep sheet, a posting saved but never read, an application gone quiet — then the coach brief, then the rates:
 
-![Today, listing what needs doing with the AI coach brief below it](docs/screenshots/today.png)
+![Today, listing what needs doing with the AI coach brief below it](docs/screenshots/today.webp)
 
 The prep sheet is something to practise against, not to read: answer keys stay collapsed, and a drill takes one question at a time and asks you to score yourself:
 
-![The interview drill showing one question with a progress bar and the answer key hidden](docs/screenshots/prep-drill.png)
+![The interview drill showing one question with a progress bar and the answer key hidden](docs/screenshots/prep-drill.webp)
 
 | Skills analysis | Resume fit |
 | --- | --- |
-| ![Required skills highlighted where matched and underlined where missing](docs/screenshots/skills-analysis.png) | ![Resume versions ranked by cosine similarity, bars scaled to the spread of the set](docs/screenshots/resume-fit.png) |
+| ![Required skills highlighted where matched and underlined where missing](docs/screenshots/skills-analysis.webp) | ![Resume versions ranked by cosine similarity, bars scaled to the spread of the set](docs/screenshots/resume-fit.webp) |
 
 Drag a card and the move persists optimistically:
 
-![Kanban board with applications grouped by status](docs/screenshots/board.png)
+![Kanban board with applications grouped by status](docs/screenshots/board.webp)
 
 Capture starts with the posting, not with a grid of empty fields. What the model read stays marked in highlighter until you touch it, and it says so when the posting never stated a field:
 
-![New-application form led by a large job-posting field with a Read the posting button beneath it](docs/screenshots/capture.png)
+![New-application form led by a large job-posting field with a Read the posting button beneath it](docs/screenshots/capture.webp)
 
 The design system in [docs/design.md](docs/design.md), as actually rendered:
 
-![Applywise landing page — hero, the AI features, and the closing call to action](docs/screenshots/landing.png)
+![Applywise landing page — hero, the AI features, and the closing call to action](docs/screenshots/landing.webp)
 
 </details>
 

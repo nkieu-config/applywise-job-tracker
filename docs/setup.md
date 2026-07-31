@@ -111,7 +111,7 @@ npm run test:coverage # vitest with per-file coverage thresholds
 npm run eval          # AI eval suites (needs GEMINI_API_KEY)
 npm run screenshots   # regenerate the README screenshots via Playwright
 npm run record-demo   # re-record the streaming GIF (Playwright + ffmpeg, one Gemini call)
-npm run social-preview # rebuild the 1280×640 GitHub social card from today.png
+npm run social-preview # rebuild the 1280×640 GitHub social card from today.webp
 npm run seed          # populate the demo account (server must be running)
 ```
 
