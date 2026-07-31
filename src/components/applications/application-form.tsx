@@ -1,6 +1,12 @@
 "use client";
 
-import { useActionState, useRef, useState, useTransition } from "react";
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import Link from "next/link";
 import {
   APPLICATION_STATUSES,
@@ -64,6 +70,21 @@ export function ApplicationForm({
   const [autofillError, setAutofillError] = useState<string | null>(null);
   const [read, setRead] = useState<ReadField[]>([]);
   const [missed, setMissed] = useState<ReadField[]>([]);
+
+  // A rejected submit leaves focus on <body>, so the next Tab starts from the
+  // top of the document rather than at the field that has to change. The error
+  // itself carries role="alert" and is announced either way; this is for
+  // whoever has to reach it.
+  useEffect(() => {
+    if (!fe) return;
+    const first = ([
+      ["company", companyRef],
+      ["role", roleRef],
+      ["deadline", deadlineRef],
+      ["jobDescription", jobDescriptionRef],
+    ] as const).find(([name]) => fe[name as keyof typeof fe]);
+    first?.[1].current?.focus();
+  }, [fe]);
 
   // Fill only fields the user hasn't touched, so re-running never clobbers an
   // edit. The form is uncontrolled, so we read and write the DOM values through
