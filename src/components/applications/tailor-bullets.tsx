@@ -16,16 +16,15 @@ export function TailorBullets({
   initialOutput?: string;
 }) {
   const [experience, setExperience] = useState(initialExperience);
-  const { output, loading, error, setError, generate, copyOutput } = useAiStream(
-    {
-      url: `/api/applications/${id}/tailor`,
-      initialOutput,
-      requestFailed: "Failed to generate bullets.",
-      onSave: (text) => saveTailoredBullets(id, experience, text),
-      savedMessage: "Bullets saved to this application.",
-      saveFailedMessage: "Bullets generated but could not be saved.",
-    },
-  );
+  const { output, loading, error, setError, generate, cancel, copyOutput } =
+    useAiStream({
+    url: `/api/applications/${id}/tailor`,
+    initialOutput,
+    requestFailed: "Failed to generate bullets.",
+    onSave: (text) => saveTailoredBullets(id, experience, text),
+    savedMessage: "Bullets saved to this application.",
+    saveFailedMessage: "Bullets generated but could not be saved.",
+  });
 
   function submit() {
     if (!experience.trim()) {
@@ -52,9 +51,20 @@ export function TailorBullets({
           aria-label="Experience to tailor"
           className={inputClass}
         />
-        <Button type="submit" disabled={loading}>
-          {loading ? "Tailoring…" : output ? "Regenerate bullets" : "Tailor bullets"}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button type="submit" disabled={loading}>
+            {loading
+              ? "Tailoring…"
+              : output
+                ? "Regenerate bullets"
+                : "Tailor bullets"}
+          </Button>
+          {loading && (
+            <Button type="button" variant="ghost" onClick={cancel}>
+              Stop
+            </Button>
+          )}
+        </div>
       </form>
 
       {error && (
@@ -67,6 +77,7 @@ export function TailorBullets({
         <div className="flex flex-col gap-2">
           <div
             aria-live="polite"
+            aria-busy={loading}
             className="whitespace-pre-wrap rounded-xl border border-hairline bg-canvas p-6 font-sans text-body-lg leading-relaxed text-ink"
           >
             {output}
