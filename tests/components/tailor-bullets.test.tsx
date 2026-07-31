@@ -93,3 +93,64 @@ describe("TailorBullets", () => {
     expect(saveTailoredBullets).not.toHaveBeenCalled();
   });
 });
+
+describe("stopping a generation in flight", () => {
+  // A stream that delivers one chunk and then stalls, so `loading` stays true
+  // until the hook's own AbortController errors it.
+  function respondWithStalledStream(firstChunk: string) {
+    const encoder = new TextEncoder();
+    let streamController: ReadableStreamDefaultController<Uint8Array>;
+    const body = new ReadableStream<Uint8Array>({
+      start(controller) {
+        streamController = controller;
+        controller.enqueue(encoder.encode(firstChunk));
+      },
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockImplementation((_url: string, init?: RequestInit) => {
+        init?.signal?.addEventListener("abort", () => {
+          streamController.error(
+            Object.assign(new Error("aborted"), { name: "AbortError" }),
+          );
+        });
+        return Promise.resolve(new Response(body, { status: 200 }));
+      }),
+    );
+  }
+
+  it("offers a way out of a generation that is still running", async () => {
+    respondWithStalledStream("- Half a bul");
+    render(<TailorBullets id="app-1" initialExperience="Built a thing" />);
+    fireEvent.click(screen.getByRole("button", { name: /tailor bullets/i }));
+
+    const stop = await screen.findByRole("button", { name: "Stop" });
+    expect(stop).toBeInTheDocument();
+    expect(screen.getByText(/Half a bul/).closest("[aria-live]")).toHaveAttribute(
+      "aria-busy",
+      "true",
+    );
+  });
+
+  it("puts the saved copy back rather than leaving half a result on screen", async () => {
+    respondWithStalledStream("- Half a bul");
+    render(
+      <TailorBullets
+        id="app-1"
+        initialExperience="Built a thing"
+        initialOutput="- The bullets already saved"
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /regenerate bullets/i }));
+
+    fireEvent.click(await screen.findByRole("button", { name: "Stop" }));
+
+    await waitFor(() =>
+      expect(screen.getByText("- The bullets already saved")).toBeInTheDocument(),
+    );
+    expect(screen.queryByText(/Half a bul/)).toBeNull();
+    // A deliberate stop is not a failure, so nothing is reported as one.
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(saveTailoredBullets).not.toHaveBeenCalled();
+  });
+});

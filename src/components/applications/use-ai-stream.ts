@@ -32,6 +32,8 @@ export function useAiStream({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const cancelledRef = useRef(false);
+  const previousRef = useRef(initialOutput);
 
   // Cancel any in-flight stream when the component unmounts (e.g. the user
   // navigates away) — otherwise the metered Gemini generation keeps running to
@@ -43,6 +45,8 @@ export function useAiStream({
     // starts streaming, and comes back if the attempt fails — a rate-limited
     // regenerate shouldn't look like the saved copy was lost.
     const previous = output;
+    previousRef.current = previous;
+    cancelledRef.current = false;
     setError(null);
     setLoading(true);
 
@@ -83,8 +87,12 @@ export function useAiStream({
         toast(savedMessage);
       }
     } catch (err) {
-      // An unmount/abort isn't a failure the (gone) user needs to see.
-      if (!(err instanceof Error && err.name === "AbortError")) {
+      // An unmount/abort isn't a failure the (gone) user needs to see. A
+      // deliberate stop is different: the reader is still here, and half a
+      // sheet that was never saved should not be left looking like a result.
+      if (err instanceof Error && err.name === "AbortError") {
+        if (cancelledRef.current) setOutput(previousRef.current);
+      } else {
         setOutput(previous);
         setError("Streaming failed. Please try again.");
       }
@@ -92,6 +100,14 @@ export function useAiStream({
       if (abortRef.current === controller) abortRef.current = null;
       setLoading(false);
     }
+  }
+
+  // Aborting reaches the route handler, which links its own controller to the
+  // request signal — so stopping here stops the metered generation too.
+  function cancel() {
+    if (!abortRef.current) return;
+    cancelledRef.current = true;
+    abortRef.current.abort();
   }
 
   async function copyOutput() {
@@ -103,5 +119,5 @@ export function useAiStream({
     }
   }
 
-  return { output, loading, error, setError, generate, copyOutput };
+  return { output, loading, error, setError, generate, cancel, copyOutput };
 }

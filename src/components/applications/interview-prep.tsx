@@ -15,7 +15,7 @@ export function InterviewPrep({
   id: string;
   initialOutput?: string;
 }) {
-  const { output, loading, error, generate, copyOutput } = useAiStream({
+  const { output, loading, error, generate, cancel, copyOutput } = useAiStream({
     url: `/api/applications/${id}/interview`,
     initialOutput,
     requestFailed: "Failed to generate interview prep.",
@@ -40,6 +40,11 @@ export function InterviewPrep({
               ? "Write a new sheet"
               : "Draft my prep sheet"}
         </Button>
+        {loading && (
+          <Button type="button" variant="ghost" onClick={cancel}>
+            Stop
+          </Button>
+        )}
         {!loading && !drilling && drillable.length > 0 && (
           <Button variant="outline" onClick={() => setDrilling(true)}>
             Practise {drillable.length} questions
