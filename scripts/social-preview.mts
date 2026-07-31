@@ -5,7 +5,7 @@ import { chromium } from "@playwright/test";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = path.join(rootDir, "docs", "screenshots");
-const source = path.join(outDir, "today.png");
+const source = path.join(outDir, "today.webp");
 
 let shot: string;
 try {
@@ -93,7 +93,7 @@ const html = `
     <span class="stat">Next.js 16 · Gemini · Postgres</span>
   </div>
 </div>
-<img class="shot" src="data:image/png;base64,${shot}" alt="" />
+<img class="shot" src="data:image/webp;base64,${shot}" alt="" />
 `;
 
 const browser = await chromium.launch();

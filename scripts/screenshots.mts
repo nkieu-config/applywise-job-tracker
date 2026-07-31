@@ -1,6 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium, type Page } from "@playwright/test";
+import sharp from "sharp";
 import {
   BASE_URL,
   CONTEXT_OPTIONS,
@@ -37,6 +38,14 @@ try {
 
 const PAD = 24;
 
+// Playwright writes PNG or JPEG. These are flat UI at 2x, which PNG stores
+// badly — the landing shot alone was 1.2MB — and JPEG would ring around the
+// text. WebP keeps the full resolution at roughly a third of the bytes.
+async function writeShot(png: Buffer, file: string) {
+  await sharp(png).webp({ quality: 82 }).toFile(path.join(outDir, file));
+  console.log(`✓ ${file}`);
+}
+
 async function shootFullPage(target: Page, file: string, maxHeight = 2200) {
   const pageHeight = await target.evaluate(
     () => document.documentElement.scrollHeight,
@@ -46,9 +55,8 @@ async function shootFullPage(target: Page, file: string, maxHeight = 2200) {
     height: Math.min(pageHeight, maxHeight),
   });
   await settle(target);
-  await target.screenshot({ path: path.join(outDir, file) });
+  await writeShot(await target.screenshot(), file);
   await target.setViewportSize({ ...CONTEXT_OPTIONS.viewport });
-  console.log(`✓ ${file}`);
 }
 
 // The README pairs these clips two to a row, so a section that runs long would
@@ -74,8 +82,7 @@ async function shootSection(heading: string, file: string, maxHeight?: number) {
   });
   const x = Math.max(rect.x - PAD, 0);
   const y = Math.max(rect.y - PAD, 0);
-  await page.screenshot({
-    path: path.join(outDir, file),
+  const shot = await page.screenshot({
     fullPage: true,
     clip: {
       x,
@@ -88,7 +95,7 @@ async function shootSection(heading: string, file: string, maxHeight?: number) {
       ),
     },
   });
-  console.log(`✓ ${file}`);
+  await writeShot(shot, file);
 }
 
 // The README hero is the app at its own fold, not the whole scrollable page: a
@@ -96,11 +103,11 @@ async function shootSection(heading: string, file: string, maxHeight?: number) {
 // it off the screen. Cutting at the viewport also lands the hero on the same 1.6
 // aspect as the board shot that follows, so the two full-width images agree.
 await settle(page);
-await shootFullPage(page, "today.png", CONTEXT_OPTIONS.viewport.height);
+await shootFullPage(page, "today.webp", CONTEXT_OPTIONS.viewport.height);
 
 await page.goto("/dashboard/applications");
 await settle(page);
-await shootFullPage(page, "board.png");
+await shootFullPage(page, "board.webp");
 
 // The new-application form with a posting pasted in, so "Read the posting" is
 // live the way someone would first meet it.
@@ -112,7 +119,7 @@ await page
     "Aperture Labs is hiring a Senior Frontend Engineer to build our design system in React, Next.js and TypeScript. Apply by 2026-09-15.",
   );
 await settle(page);
-await shootFullPage(page, "capture.png", 1400);
+await shootFullPage(page, "capture.webp", 1400);
 
 // The Read: the posting marked up against the resumes. This is the shot the
 // README opens with, so it is taken at the fold rather than full-page.
@@ -120,9 +127,9 @@ await page.goto("/dashboard/applications/demo_app_1");
 await settle(page);
 await page.getByRole("tab", { name: "Match" }).click();
 await settle(page);
-await shootFullPage(page, "the-read.png", CONTEXT_OPTIONS.viewport.height);
-await shootSection("Skills analysis", "skills-analysis.png");
-await shootSection("Resume fit", "resume-fit.png");
+await shootFullPage(page, "the-read.webp", CONTEXT_OPTIONS.viewport.height);
+await shootSection("Skills analysis", "skills-analysis.webp");
+await shootSection("Resume fit", "resume-fit.webp");
 
 // The drill, mid-question with the answer key still hidden.
 await page.getByRole("tab", { name: "Prep" }).click();
@@ -132,7 +139,7 @@ if (await practise.count()) {
   await practise.click();
   await settle(page);
 }
-await shootFullPage(page, "prep-drill.png", 1200);
+await shootFullPage(page, "prep-drill.webp", 1200);
 
 // The landing page's product shot — the most-seen image in the project, and
 // the one nothing regenerated. It was drawn by hand and was two renames out of
@@ -166,7 +173,7 @@ const { context: visitorContext, page: visitorPage } =
   await newDemoPage(browser);
 await visitorPage.goto("/");
 await settle(visitorPage);
-await shootFullPage(visitorPage, "landing.png", 4000);
+await shootFullPage(visitorPage, "landing.webp", 4000);
 await visitorContext.close();
 
 await browser.close();
