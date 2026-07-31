@@ -76,7 +76,7 @@ Run it in this order:
 
 ## Step 3 — Seed the demo account (optional)
 
-The **Try the demo** button expects `demo@applywise.app` to exist with sample
+The **Try the demo** button expects `demo@jobtracker.app` to exist with sample
 data. Seed it against the production database once, after the first deploy —
 point `BASE_URL` at the live URL (the seed signs the account up through the
 running app so passwords hash the same way) and the connection strings at Neon:

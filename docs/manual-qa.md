@@ -43,7 +43,7 @@ worth clicking.
 | # | Do this | Where | Expected result |
 | --- | --- | --- | --- |
 | 1 | Click **Try the live demo** | landing page | Lands on `/dashboard`, signed in as Demo User 🤖 |
-| 2 | Or sign in as `demo@applywise.app` / `demotracker2026` | `/sign-in` | Same page — **Try the demo account** does it in one click 🤖 |
+| 2 | Or sign in as `demo@jobtracker.app` / `demotracker2026` | `/sign-in` | Same page — **Try the demo account** does it in one click 🤖 |
 
 ### Today
 
